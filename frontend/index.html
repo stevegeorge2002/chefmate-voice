@@ -18,7 +18,6 @@
             overflow-x: hidden;
         }
 
-        /* Top Bar */
         .top-bar {
             background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
             padding: 1.5rem 2rem;
@@ -88,6 +87,16 @@
             50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
         }
 
+        .voice-status {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.875rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
         .language-selector {
             display: flex;
             gap: 0.5rem;
@@ -116,7 +125,6 @@
             border-color: #e94560;
         }
 
-        /* Main Grid */
         .dashboard {
             display: grid;
             grid-template-columns: 400px 1fr 350px;
@@ -145,7 +153,6 @@
             letter-spacing: 2px;
         }
 
-        /* Transcript Display */
         .transcript-box {
             background: #0f3460;
             border-radius: 0.75rem;
@@ -172,7 +179,6 @@
             to { opacity: 1; }
         }
 
-        /* Order Cards */
         .orders-container {
             display: flex;
             flex-direction: column;
@@ -277,7 +283,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Allergen Alert */
         .allergen-alert {
             background: linear-gradient(135deg, #dc2626, #991b1b);
             padding: 1.5rem;
@@ -303,7 +308,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Inventory Status */
         .inventory-item {
             display: flex;
             justify-content: space-between;
@@ -335,7 +339,6 @@
         .stock-badge.low { background: #fbbf24; color: #1a1a2e; }
         .stock-badge.out { background: #dc2626; color: white; }
 
-        /* Demo Controls */
         .demo-controls {
             position: fixed;
             bottom: 2rem;
@@ -368,7 +371,6 @@
             box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             top: 120px;
@@ -394,7 +396,6 @@
             background: linear-gradient(135deg, #dc2626, #991b1b);
         }
 
-        /* Analytics */
         .stat-card {
             background: linear-gradient(135deg, #0f3460, #16213e);
             padding: 1.25rem;
@@ -423,7 +424,6 @@
             margin-top: 0.25rem;
         }
 
-        /* Conversation Feed */
         .conversation-feed {
             background: #0f3460;
             border-radius: 0.75rem;
@@ -475,23 +475,6 @@
             font-style: italic;
         }
 
-        /* Loading */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(233, 69, 96, 0.3);
-            border-top: 3px solid #e94560;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
         @media (max-width: 1400px) {
             .dashboard {
                 grid-template-columns: 350px 1fr 300px;
@@ -508,14 +491,9 @@
                 left: 1rem;
             }
         }
-
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
     <div class="top-bar">
         <div class="logo">
             <div class="logo-icon">👨‍🍳</div>
@@ -533,18 +511,15 @@
             <button class="lang-btn" onclick="setLanguage('vi')">🇻🇳 VI</button>
         </div>
 
-        <button class="voice-button" id="voice-btn" onclick="toggleVoice()">
-            🎙️
-        </button>
+        <div style="position: relative;">
+            <button class="voice-button" id="voice-btn" onclick="toggleVoice()">🎙️</button>
+            <div class="voice-status" id="voice-status">Click to speak</div>
+        </div>
     </div>
 
-    <!-- Main Dashboard -->
     <div class="dashboard">
-        <!-- Left Panel - Voice Input & Conversation -->
         <div class="panel">
-            <div class="panel-header">
-                Voice Input
-            </div>
+            <div class="panel-header">Voice Input</div>
 
             <div class="transcript-box">
                 <div class="transcript-text" id="transcript">
@@ -556,7 +531,7 @@
                 <input 
                     type="text" 
                     id="text-command" 
-                    placeholder="Type command: 'Order fire table 5, two steaks medium-rare'"
+                    placeholder="Type: 'Order fire table 5, two steaks medium-rare'"
                     style="width: 100%; padding: 1rem; background: #0f3460; border: 2px solid #e94560; border-radius: 0.5rem; color: white; font-size: 1rem;"
                     onkeypress="if(event.key==='Enter') sendTextCommand()"
                 />
@@ -575,7 +550,6 @@
             </div>
         </div>
 
-        <!-- Center Panel - Active Orders -->
         <div class="panel">
             <div class="panel-header">
                 Active Orders
@@ -591,11 +565,8 @@
             </div>
         </div>
 
-        <!-- Right Panel - Stats & Inventory -->
         <div class="panel">
-            <div class="panel-header">
-                Kitchen Stats
-            </div>
+            <div class="panel-header">Kitchen Stats</div>
 
             <div class="stat-card">
                 <h3>Orders Today</h3>
@@ -627,81 +598,126 @@
         </div>
     </div>
 
-    <!-- Demo Controls -->
     <div class="demo-controls">
         <h3 style="color: #e94560; margin-bottom: 1rem; text-align: center; font-size: 1.25rem;">🎮 DEMO</h3>
-        <button class="demo-btn" onclick="runDemo('dinner-rush')">
-            🍽️ Dinner Rush
-        </button>
-        <button class="demo-btn" onclick="runDemo('multilingual')">
-            🌍 Multilingual Chat
-        </button>
-        <button class="demo-btn" onclick="runDemo('allergen')">
-            🚨 Allergen Alert
-        </button>
-        <button class="demo-btn" onclick="runDemo('reset')">
-            🔄 Reset Kitchen
-        </button>
+        <button class="demo-btn" onclick="runDemo('dinner-rush')">🍽️ Dinner Rush</button>
+        <button class="demo-btn" onclick="runDemo('multilingual')">🌍 Multilingual Chat</button>
+        <button class="demo-btn" onclick="runDemo('allergen')">🚨 Allergen Alert</button>
+        <button class="demo-btn" onclick="runDemo('reset')">🔄 Reset Kitchen</button>
     </div>
 
-    <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        // Auto-detect API URL
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:8000'
-            : 'https://chefmate-voice-backend.onrender.com'; // Update with your Render URL
+            : 'https://chefmate-voice-backend.onrender.com';
 
         let currentLanguage = 'en';
-        let isListening = false;
+        let recognition = null;
         let orders = {};
         let timerIntervals = {};
 
-        // Language Management
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                console.warn('Speech Recognition not supported in this browser');
+                return null;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                document.getElementById('voice-status').textContent = '🎙️ Listening...';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('text-command').value = transcript;
+                document.getElementById('transcript').textContent = `"${transcript}"`;
+                document.getElementById('transcript').classList.add('active');
+                
+                // Auto-send command
+                setTimeout(() => {
+                    sendTextCommand();
+                }, 500);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                showToast('⚠️ Voice recognition error. Try typing instead.', true);
+                stopVoice();
+            };
+
+            recognition.onend = () => {
+                stopVoice();
+            };
+
+            return recognition;
+        }
+
         function setLanguage(lang) {
             currentLanguage = lang;
-            
-            // Update UI
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+            
+            if (recognition) {
+                recognition.lang = lang === 'zh' ? 'zh-CN' : lang === 'vi' ? 'vi-VN' : `${lang}-US`;
+            }
             
             showToast(`Language set to ${lang.toUpperCase()}`);
         }
 
-        // Voice Recording (simulated - would use Web Audio API in production)
         function toggleVoice() {
+            if (!recognition) {
+                recognition = initSpeechRecognition();
+                if (!recognition) {
+                    showToast('⚠️ Voice not supported. Use text input instead.', true);
+                    return;
+                }
+            }
+
             const btn = document.getElementById('voice-btn');
             
-            if (!isListening) {
-                isListening = true;
-                btn.classList.add('listening');
-                btn.textContent = '🔴';
-                showToast('🎙️ Listening... (Demo: Type command below)');
+            if (btn.classList.contains('listening')) {
+                stopVoice();
             } else {
-                isListening = false;
-                btn.classList.remove('listening');
-                btn.textContent = '🎙️';
+                try {
+                    recognition.start();
+                    btn.classList.add('listening');
+                    btn.textContent = '🔴';
+                } catch (err) {
+                    console.error('Start error:', err);
+                    showToast('Click again to start recording', true);
+                }
             }
         }
 
-        // Send text command
+        function stopVoice() {
+            const btn = document.getElementById('voice-btn');
+            btn.classList.remove('listening');
+            btn.textContent = '🎙️';
+            document.getElementById('voice-status').textContent = 'Click to speak';
+        }
+
         async function sendTextCommand() {
             const input = document.getElementById('text-command');
             const command = input.value.trim();
             
             if (!command) return;
-            
-            // Update transcript display
+
             const transcript = document.getElementById('transcript');
             transcript.textContent = `"${command}"`;
             transcript.classList.add('active');
-            
-            // Add to conversation
+
             addMessage('chef', currentLanguage, command);
-            
-            // Send to backend
+
             try {
                 const response = await fetch(`${API_URL}/api/voice/command`, {
                     method: 'POST',
@@ -712,18 +728,15 @@
                         language: currentLanguage
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     if (data.order) {
                         addOrder(data.order);
                         showToast(`✅ Order created: Table ${data.order.table_number}`);
-                    } else {
-                        showToast(`✅ ${data.message || 'Command processed'}`);
                     }
                     
-                    // Show allergen warnings
                     if (data.allergen_warnings && data.allergen_warnings.length > 0) {
                         showAllergenAlert(data.allergen_warnings[0]);
                     }
@@ -732,28 +745,22 @@
                 } else {
                     showToast(`❌ ${data.error || 'Command failed'}`, true);
                 }
-                
             } catch (error) {
                 console.error('API error:', error);
-                showToast('⚠️ Backend offline - using demo mode', true);
+                showToast('⚠️ Using demo mode - Backend offline', true);
             }
-            
+
             input.value = '';
-            
-            setTimeout(() => {
-                transcript.classList.remove('active');
-            }, 3000);
+            setTimeout(() => transcript.classList.remove('active'), 3000);
         }
 
-        // Add message to conversation feed
         function addMessage(speaker, lang, text, translation = null) {
             const feed = document.getElementById('conversation');
             
-            // Clear empty state
             if (feed.querySelector('div[style*="text-align: center"]')) {
                 feed.innerHTML = '';
             }
-            
+
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${speaker}`;
             msgDiv.innerHTML = `
@@ -764,24 +771,22 @@
                 <div class="message-text">${text}</div>
                 ${translation ? `<div class="translation">🌍 ${translation}</div>` : ''}
             `;
-            
+
             feed.appendChild(msgDiv);
             feed.scrollTop = feed.scrollHeight;
         }
 
-        // Add order to display
         function addOrder(order) {
             const container = document.getElementById('orders');
             
-            // Clear empty state
             if (container.querySelector('div[style*="text-align: center"]')) {
                 container.innerHTML = '';
             }
-            
+
             const orderDiv = document.createElement('div');
             orderDiv.className = 'order-card';
             orderDiv.id = `order-${order.order_id}`;
-            
+
             let itemsHtml = '';
             order.items.forEach(item => {
                 const cookTime = item.cook_time_minutes;
@@ -791,80 +796,61 @@
                             <div class="item-name">${item.quantity}x ${item.dish_name}</div>
                             ${item.temp ? `<div class="item-temp">${item.temp.replace('_', ' ')}</div>` : ''}
                         </div>
-                        <div class="timer" id="timer-${order.order_id}-${item.dish_key}">
-                            ${cookTime}:00
-                        </div>
+                        <div class="timer" id="timer-${order.order_id}-${item.dish_key}">${cookTime}:00</div>
                     </div>
                 `;
             });
-            
+
             orderDiv.innerHTML = `
                 <div class="order-header">
                     <div class="table-number">Table ${order.table_number}</div>
                     <div class="order-id">${order.order_id}</div>
                 </div>
-                <div class="order-items">
-                    ${itemsHtml}
-                </div>
+                <div class="order-items">${itemsHtml}</div>
             `;
-            
+
             container.insertBefore(orderDiv, container.firstChild);
-            
-            // Store order
             orders[order.order_id] = order;
-            
-            // Start timers
             startOrderTimers(order);
-            
-            // Update count
             updateOrderCount();
         }
 
-        // Start countdown timers
         function startOrderTimers(order) {
             order.items.forEach(item => {
                 const timerId = `timer-${order.order_id}-${item.dish_key}`;
                 const timerElement = document.getElementById(timerId);
                 
                 if (!timerElement) return;
-                
+
                 let secondsRemaining = item.cook_time_minutes * 60;
-                
+
                 const interval = setInterval(() => {
                     secondsRemaining--;
-                    
+
                     if (secondsRemaining <= 0) {
                         clearInterval(interval);
                         timerElement.textContent = '✅ READY';
                         timerElement.classList.add('ready');
                         
-                        // Mark order as ready
                         const orderCard = document.getElementById(`order-${order.order_id}`);
-                        if (orderCard) {
-                            orderCard.classList.add('ready');
-                        }
+                        if (orderCard) orderCard.classList.add('ready');
                         
                         showToast(`🔔 Table ${order.table_number} is READY!`);
-                        
-                        // Play alert sound (would add audio element)
-                        
                     } else {
                         const minutes = Math.floor(secondsRemaining / 60);
                         const seconds = secondsRemaining % 60;
                         timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                         
-                        // Warning when < 2 minutes
-                        if (secondsRemaining <= 120 && secondsRemaining > 0) {
+                        if (secondsRemaining <= 120) {
                             timerElement.classList.add('warning');
                         }
                     }
                 }, 1000);
-                
+
                 timerIntervals[timerId] = interval;
             });
         }
 
-        // Show allergen alert
         function showAllergenAlert(warning) {
             const container = document.getElementById('orders');
             
@@ -875,25 +861,17 @@
                 <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">
                     <strong>${warning.dish}</strong> contains ${warning.allergens.join(', ')}
                 </p>
-                <p style="font-size: 1rem; opacity: 0.9;">
-                    ${warning.message}
-                </p>
+                <p style="font-size: 1rem; opacity: 0.9;">${warning.message}</p>
             `;
-            
+
             container.insertBefore(alertDiv, container.firstChild);
-            
-            // Remove after 10 seconds
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 10000);
+            setTimeout(() => alertDiv.remove(), 10000);
         }
 
-        // Update order count
         function updateOrderCount() {
             document.getElementById('active-count').textContent = Object.keys(orders).length;
         }
 
-        // Load analytics
         async function loadAnalytics() {
             try {
                 const response = await fetch(`${API_URL}/api/analytics`);
@@ -905,13 +883,11 @@
                     const minutes = parseFloat(data.time_saved_vs_manual);
                     document.getElementById('time-saved').textContent = Math.round(minutes);
                 }
-                
             } catch (error) {
                 console.error('Analytics error:', error);
             }
         }
 
-        // Load inventory
         async function loadInventory() {
             try {
                 const response = await fetch(`${API_URL}/api/inventory`);
@@ -919,7 +895,7 @@
                 
                 const inventoryList = document.getElementById('inventory-list');
                 inventoryList.innerHTML = '';
-                
+
                 const icons = {
                     ribeye: '🥩',
                     salmon: '🐟',
@@ -927,7 +903,7 @@
                     chicken: '🍗',
                     romaine: '🥬'
                 };
-                
+
                 for (const [item, details] of Object.entries(data.inventory)) {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = `inventory-item ${details.status}`;
@@ -937,159 +913,113 @@
                     `;
                     inventoryList.appendChild(itemDiv);
                 }
-                
             } catch (error) {
                 console.error('Inventory error:', error);
             }
         }
 
-        // Show toast
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.remove('error');
             if (isError) toast.classList.add('error');
             toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        // Run demo scenarios
         async function runDemo(scenario) {
             const demos = {
-                'dinner-rush': {
-                    endpoint: '/api/demo/dinner-rush',
-                    message: '🍽️ Dinner rush simulated - 5 orders created!'
-                },
-                'multilingual': {
-                    endpoint: '/api/demo/multilingual-conversation',
-                    message: '🌍 Multilingual conversation simulated - EN ↔ ES!'
-                },
-                'allergen': {
-                    endpoint: '/api/demo/allergen-alert',
-                    message: '🚨 Allergen alert triggered - Table 12 dairy/gluten allergy!'
-                },
-                'reset': {
-                    endpoint: '/api/demo/reset',
-                    message: '🔄 Kitchen reset to clean state'
-                }
+                'dinner-rush': { endpoint: '/api/demo/dinner-rush', message: '🍽️ Dinner rush simulated - 5 orders created!' },
+                'multilingual': { endpoint: '/api/demo/multilingual-conversation', message: '🌍 Multilingual conversation simulated!' },
+                'allergen': { endpoint: '/api/demo/allergen-alert', message: '🚨 Allergen alert triggered!' },
+                'reset': { endpoint: '/api/demo/reset', message: '🔄 Kitchen reset' }
             };
-            
+
             const demo = demos[scenario];
             if (!demo) return;
-            
+
             try {
-                const response = await fetch(`${API_URL}${demo.endpoint}`, {
-                    method: 'POST'
-                });
-                
+                const response = await fetch(`${API_URL}${demo.endpoint}`, { method: 'POST' });
                 const data = await response.json();
-                
+
                 if (scenario === 'dinner-rush') {
-                    // Reload orders
                     await loadActiveOrders();
-                } else if (scenario === 'multilingual') {
-                    // Show conversation
-                    if (data.conversation) {
-                        data.conversation.forEach((msg, i) => {
-                            setTimeout(() => {
-                                addMessage(
-                                    msg.speaker,
-                                    msg.language,
-                                    msg.original,
-                                    msg.translations ? msg.translations.en : null
-                                );
-                            }, i * 1000);
-                        });
-                    }
+                } else if (scenario === 'multilingual' && data.conversation) {
+                    data.conversation.forEach((msg, i) => {
+                        setTimeout(() => addMessage(msg.speaker, msg.original_language, msg.original_message), i * 1000);
+                    });
                 } else if (scenario === 'allergen') {
-                    if (data.allergen_warnings && data.allergen_warnings.length > 0) {
-                        showAllergenAlert(data.allergen_warnings[0]);
-                    }
-                    if (data.order) {
-                        addOrder(data.order);
-                    }
+                    if (data.allergen_warnings?.length > 0) showAllergenAlert(data.allergen_warnings[0]);
+                    if (data.order) addOrder(data.order);
                 } else if (scenario === 'reset') {
-                    // Clear everything
                     orders = {};
                     document.getElementById('orders').innerHTML = `
                         <div style="text-align: center; padding: 3rem; color: #64748b;">
                             <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
                             <h3>No Active Orders</h3>
-                            <p style="margin-top: 0.5rem;">Kitchen reset - ready for service</p>
                         </div>
                     `;
                     document.getElementById('conversation').innerHTML = `
-                        <div style="text-align: center; color: #64748b; padding: 2rem;">
-                            Conversation cleared
-                        </div>
+                        <div style="text-align: center; color: #64748b; padding: 2rem;">Conversation cleared</div>
                     `;
                     updateOrderCount();
                 }
-                
+
                 showToast(demo.message);
                 loadAnalytics();
                 loadInventory();
-                
             } catch (error) {
                 console.error('Demo error:', error);
-                showToast('⚠️ Demo failed - check backend connection', true);
+                showToast('⚠️ Demo failed - Backend offline', true);
             }
         }
 
-        // Load active orders from API
         async function loadActiveOrders() {
             try {
                 const response = await fetch(`${API_URL}/api/orders/active`);
                 const data = await response.json();
-                
-                if (data.orders && data.orders.length > 0) {
-                    const container = document.getElementById('orders');
-                    container.innerHTML = '';
-                    
-                    data.orders.forEach(order => {
-                        addOrder(order);
-                    });
+
+                if (data.orders?.length > 0) {
+                    document.getElementById('orders').innerHTML = '';
+                    data.orders.forEach(order => addOrder(order));
                 }
-                
+
                 updateOrderCount();
-                
             } catch (error) {
                 console.error('Load orders error:', error);
             }
         }
 
-        // Initialize on load
         window.onload = async function() {
             console.log('👨‍🍳 ChefMate Voice Dashboard Initializing...');
             
+            // Initialize speech recognition
+            recognition = initSpeechRecognition();
+            
+            if (!recognition) {
+                document.getElementById('voice-status').textContent = 'Voice not supported - use text';
+            }
+
             try {
-                // Test backend connection
                 const response = await fetch(`${API_URL}/api/health`);
                 const health = await response.json();
-                
+
                 if (health.status === 'healthy') {
                     showToast('✅ Connected to ChefMate Voice backend');
-                    
-                    // Load initial data
                     await loadAnalytics();
                     await loadInventory();
                     await loadActiveOrders();
                 } else {
                     showToast('⚠️ Backend issues detected', true);
                 }
-                
             } catch (error) {
                 console.error('Connection error:', error);
-                showToast('⚠️ Backend offline - Demo mode active', true);
+                showToast('⚠️ Backend offline - Demo mode active. Click demo buttons to test!', true);
             }
-            
+
             console.log('✅ Dashboard Ready!');
         };
 
-        // Refresh data every 5 seconds
         setInterval(() => {
             loadAnalytics();
             loadInventory();
