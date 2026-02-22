@@ -377,7 +377,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 - **Demo:** https://stevegeorge2002.github.io/chefmate-voice/
 - **GitHub:** https://github.com/stevegeorge2002/chefmate-voice
-- **LinkedIn:** [[Your LinkedIn URL](https://www.linkedin.com/in/steve-george-2020ab125/)]
+- **LinkedIn:** [https://www.linkedin.com/in/steve-george-2020ab125/]
 - **Email:** stevegeorge12@yahoo.com
 
 ---
