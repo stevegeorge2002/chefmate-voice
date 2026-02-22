@@ -37,11 +37,8 @@
 ---
 
 ## 🚀 Live Demo
-
-**🌐 Kitchen Display:** https://YOUR_USERNAME.github.io/chefmate-voice/  
-**📡 API:** https://chefmate-voice-backend.onrender.com  
-**📊 API Docs:** https://chefmate-voice-backend.onrender.com/docs  
-
+**🌐 Kitchen Display:** https://stevegeorge2002.github.io/chefmate-voice/   
+**Convex Dashboard:** https://dashboard.convex.dev/d/academic-gecko-399
 **Try it:** Use voice commands or test with demo buttons!
 
 ---
@@ -208,7 +205,7 @@ Kitchen Display (All Languages)
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/chefmate-voice.git
+git clone https://github.com/stevegeorge2002/chefmate-voice.git
 cd chefmate-voice
 
 # Install backend dependencies
@@ -378,10 +375,10 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## 📞 Contact
 
-- **Demo:** https://YOUR_USERNAME.github.io/chefmate-voice/
-- **GitHub:** https://github.com/YOUR_USERNAME/chefmate-voice
-- **LinkedIn:** [Your LinkedIn URL]
-- **Email:** your@email.com
+- **Demo:** https://stevegeorge2002.github.io/chefmate-voice/
+- **GitHub:** https://github.com/stevegeorge2002/chefmate-voice
+- **LinkedIn:** [[Your LinkedIn URL](https://www.linkedin.com/in/steve-george-2020ab125/)]
+- **Email:** stevegeorge12@yahoo.com
 
 ---
 
@@ -460,9 +457,9 @@ WHAT'S NEXT 🚀
 
 If you're a restaurant owner, chef, or investor interested in kitchen tech - let's talk!
 
-🔗 Live Demo: https://YOUR_USERNAME.github.io/chefmate-voice/
-🔗 GitHub: https://github.com/YOUR_USERNAME/chefmate-voice
-🔗 Built with: #Speechmatics #MiniMax #ArmorIQ #AI #VoiceAI
+🔗 Live Demo: https://stevegeorge2002.github.io/chefmate-voice/
+🔗 GitHub: https://github.com/stevegeorge2002/chefmate-voice
+🔗 Built with: #Speechmatics #MiniMax #AI #VoiceAI
 
 #RestaurantTech #AI #VoiceAssistant #Multilingual #FoodTech #Hackathon #AfforeCapital #StartupLife
 
