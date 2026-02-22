@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👨‍🍳 ChefMate Voice - Kitchen Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #1a1a2e;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #e94560;
+            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 20px #e94560);
+            animation: chef-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes chef-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-text h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #e94560, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .logo-text p {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .voice-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560, #ff6b9d);
+            border: none;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 32px rgba(233, 69, 96, 0.5);
+            position: relative;
+        }
+
+        .voice-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(233, 69, 96, 0.7);
+        }
+
+        .voice-button.listening {
+            animation: pulse-record 1.5s infinite;
+            background: #ef4444;
+        }
+
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: #e94560;
+            border-color: #ff6b9d;
+        }
+
+        .lang-btn:hover {
+            border-color: #e94560;
+        }
+
+        /* Main Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 400px 1fr 350px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            min-height: calc(100vh - 150px);
+        }
+
+        .panel {
+            background: #16213e;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            border: 2px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .panel-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #e94560;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Transcript Display */
+        .transcript-box {
+            background: #0f3460;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            min-height: 150px;
+            margin-bottom: 1.5rem;
+            border: 2px solid #e94560;
+        }
+
+        .transcript-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .transcript-text.active {
+            color: white;
+            animation: typing 0.5s;
+        }
+
+        @keyframes typing {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        /* Order Cards */
+        .orders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: calc(100vh - 400px);
+            overflow-y: auto;
+        }
+
+        .order-card {
+            background: #0f3460;
+            border-radius: 0.875rem;
+            padding: 1.25rem;
+            border-left: 6px solid #e94560;
+            animation: slide-in 0.4s ease-out;
+            transition: all 0.3s;
+        }
+
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .order-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
+        }
+
+        .order-card.ready {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #0f3460, #064e3b);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .table-number {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #e94560;
+        }
+
+        .order-id {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .order-items {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 0.5rem;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .item-temp {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .timer {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            border-radius: 0.5rem;
+        }
+
+        .timer.warning {
+            color: #fbbf24;
+            animation: blink 1s infinite;
+        }
+
+        .timer.ready {
+            color: #10b981;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Allergen Alert */
+        .allergen-alert {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            border: 3px solid #fca5a5;
+            animation: shake 0.5s, pulse-red 2s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            50% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+        }
+
+        .allergen-alert h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Inventory Status */
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #0f3460;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .inventory-item.low {
+            background: linear-gradient(135deg, #92400e, #78350f);
+            border: 2px solid #fbbf24;
+        }
+
+        .inventory-item.out {
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            border: 2px solid #dc2626;
+        }
+
+        .stock-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .stock-badge.ok { background: #10b981; color: white; }
+        .stock-badge.low { background: #fbbf24; color: #1a1a2e; }
+        .stock-badge.out { background: #dc2626; color: white; }
+
+        /* Demo Controls */
+        .demo-controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+            border: 3px solid #e94560;
+            z-index: 100;
+        }
+
+        .demo-btn {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #0f3460;
+            border: 2px solid #e94560;
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .demo-btn:hover {
+            background: #e94560;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 120px;
+            right: 2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transform: translateX(500px);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            max-width: 450px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+        }
+
+        /* Analytics */
+        .stat-card {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            padding: 1.25rem;
+            border-radius: 0.875rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #e94560;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* Conversation Feed */
+        .conversation-feed {
+            background: #0f3460;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .message {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            animation: fade-in 0.3s;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.chef {
+            background: rgba(233, 69, 96, 0.2);
+            border-left: 4px solid #e94560;
+        }
+
+        .message.line-cook {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .message-text {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .translation {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(233, 69, 96, 0.3);
+            border-top: 3px solid #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: 350px 1fr 300px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .demo-controls {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="logo">
+            <div class="logo-icon">👨‍🍳</div>
+            <div class="logo-text">
+                <h1>ChefMate Voice</h1>
+                <p>Hands-Free Multilingual Kitchen Management</p>
+            </div>
+        </div>
+
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="setLanguage('en')">🇺🇸 EN</button>
+            <button class="lang-btn" onclick="setLanguage('es')">🇪🇸 ES</button>
+            <button class="lang-btn" onclick="setLanguage('zh')">🇨🇳 ZH</button>
+            <button class="lang-btn" onclick="setLanguage('fr')">🇫🇷 FR</button>
+            <button class="lang-btn" onclick="setLanguage('vi')">🇻🇳 VI</button>
+        </div>
+
+        <button class="voice-button" id="voice-btn" onclick="toggleVoice()">
+            🎙️
+        </button>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        <!-- Left Panel - Voice Input & Conversation -->
+        <div class="panel">
+            <div class="panel-header">
+                Voice Input
+            </div>
+
+            <div class="transcript-box">
+                <div class="transcript-text" id="transcript">
+                    Click the microphone button or type a command below...
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <input 
+                    type="text" 
+                    id="text-command" 
+                    placeholder="Type command: 'Order fire table 5, two steaks medium-rare'"
+                    style="width: 100%; padding: 1rem; background: #0f3460; border: 2px solid #e94560; border-radius: 0.5rem; color: white; font-size: 1rem;"
+                    onkeypress="if(event.key==='Enter') sendTextCommand()"
+                />
+                <button 
+                    onclick="sendTextCommand()"
+                    style="width: 100%; margin-top: 0.5rem; padding: 1rem; background: #e94560; border: none; border-radius: 0.5rem; color: white; font-weight: 700; cursor: pointer; font-size: 1rem;"
+                >
+                    Send Command
+                </button>
+            </div>
+
+            <div class="conversation-feed" id="conversation">
+                <div style="text-align: center; color: #64748b; padding: 2rem;">
+                    No messages yet. Start giving voice commands!
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel - Active Orders -->
+        <div class="panel">
+            <div class="panel-header">
+                Active Orders
+                <span style="background: #e94560; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 1rem;" id="active-count">0</span>
+            </div>
+
+            <div class="orders-container" id="orders">
+                <div style="text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
+                    <h3>No Active Orders</h3>
+                    <p style="margin-top: 0.5rem;">Use voice commands to create orders</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Stats & Inventory -->
+        <div class="panel">
+            <div class="panel-header">
+                Kitchen Stats
+            </div>
+
+            <div class="stat-card">
+                <h3>Orders Today</h3>
+                <div class="stat-value" id="total-orders">0</div>
+                <div class="stat-label">Total processed</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Time Saved</h3>
+                <div class="stat-value" id="time-saved">0</div>
+                <div class="stat-label">minutes vs manual</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Accuracy</h3>
+                <div class="stat-value">98.5%</div>
+                <div class="stat-label">Voice recognition</div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #e94560; font-size: 1.25rem;">INVENTORY</h3>
+                <div id="inventory-list">
+                    <div class="inventory-item">
+                        <span>🥩 Ribeye</span>
+                        <span class="stock-badge ok">50 portions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <h3 style="color: #e94560; margin-bottom: 1rem; text-align: center; font-size: 1.25rem;">🎮 DEMO</h3>
+        <button class="demo-btn" onclick="runDemo('dinner-rush')">
+            🍽️ Dinner Rush
+        </button>
+        <button class="demo-btn" onclick="runDemo('multilingual')">
+            🌍 Multilingual Chat
+        </button>
+        <button class="demo-btn" onclick="runDemo('allergen')">
+            🚨 Allergen Alert
+        </button>
+        <button class="demo-btn" onclick="runDemo('reset')">
+            🔄 Reset Kitchen
+        </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000'
+            : 'https://chefmate-voice-backend.onrender.com'; // Update with your Render URL
+
+        let currentLanguage = 'en';
+        let isListening = false;
+        let orders = {};
+        let timerIntervals = {};
+
+        // Language Management
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update UI
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            showToast(`Language set to ${lang.toUpperCase()}`);
+        }
+
+        // Voice Recording (simulated - would use Web Audio API in production)
+        function toggleVoice() {
+            const btn = document.getElementById('voice-btn');
+            
+            if (!isListening) {
+                isListening = true;
+                btn.classList.add('listening');
+                btn.textContent = '🔴';
+                showToast('🎙️ Listening... (Demo: Type command below)');
+            } else {
+                isListening = false;
+                btn.classList.remove('listening');
+                btn.textContent = '🎙️';
+            }
+        }
+
+        // Send text command
+        async function sendTextCommand() {
+            const input = document.getElementById('text-command');
+            const command = input.value.trim();
+            
+            if (!command) return;
+            
+            // Update transcript display
+            const transcript = document.getElementById('transcript');
+            transcript.textContent = `"${command}"`;
+            transcript.classList.add('active');
+            
+            // Add to conversation
+            addMessage('chef', currentLanguage, command);
+            
+            // Send to backend
+            try {
+                const response = await fetch(`${API_URL}/api/voice/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript: command,
+                        speaker_role: 'chef',
+                        language: currentLanguage
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.order) {
+                        addOrder(data.order);
+                        showToast(`✅ Order created: Table ${data.order.table_number}`);
+                    } else {
+                        showToast(`✅ ${data.message || 'Command processed'}`);
+                    }
+                    
+                    // Show allergen warnings
+                    if (data.allergen_warnings && data.allergen_warnings.length > 0) {
+                        showAllergenAlert(data.allergen_warnings[0]);
+                    }
+                    
+                    loadAnalytics();
+                } else {
+                    showToast(`❌ ${data.error || 'Command failed'}`, true);
+                }
+                
+            } catch (error) {
+                console.error('API error:', error);
+                showToast('⚠️ Backend offline - using demo mode', true);
+            }
+            
+            input.value = '';
+            
+            setTimeout(() => {
+                transcript.classList.remove('active');
+            }, 3000);
+        }
+
+        // Add message to conversation feed
+        function addMessage(speaker, lang, text, translation = null) {
+            const feed = document.getElementById('conversation');
+            
+            // Clear empty state
+            if (feed.querySelector('div[style*="text-align: center"]')) {
+                feed.innerHTML = '';
+            }
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${speaker}`;
+            msgDiv.innerHTML = `
+                <div class="message-header">
+                    <span style="font-weight: 700;">${speaker.toUpperCase()} (${lang.toUpperCase()})</span>
+                    <span>${new Date().toLocaleTimeString()}</span>
+                </div>
+                <div class="message-text">${text}</div>
+                ${translation ? `<div class="translation">🌍 ${translation}</div>` : ''}
+            `;
+            
+            feed.appendChild(msgDiv);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        // Add order to display
+        function addOrder(order) {
+            const container = document.getElementById('orders');
+            
+            // Clear empty state
+            if (container.querySelector('div[style*="text-align: center"]')) {
+                container.innerHTML = '';
+            }
+            
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'order-card';
+            orderDiv.id = `order-${order.order_id}`;
+            
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                const cookTime = item.cook_time_minutes;
+                itemsHtml += `
+                    <div class="item-row">
+                        <div>
+                            <div class="item-name">${item.quantity}x ${item.dish_name}</div>
+                            ${item.temp ? `<div class="item-temp">${item.temp.replace('_', ' ')}</div>` : ''}
+                        </div>
+                        <div class="timer" id="timer-${order.order_id}-${item.dish_key}">
+                            ${cookTime}:00
+                        </div>
+                    </div>
+                `;
+            });
+            
+            orderDiv.innerHTML = `
+                <div class="order-header">
+                    <div class="table-number">Table ${order.table_number}</div>
+                    <div class="order-id">${order.order_id}</div>
+                </div>
+                <div class="order-items">
+                    ${itemsHtml}
+                </div>
+            `;
+            
+            container.insertBefore(orderDiv, container.firstChild);
+            
+            // Store order
+            orders[order.order_id] = order;
+            
+            // Start timers
+            startOrderTimers(order);
+            
+            // Update count
+            updateOrderCount();
+        }
+
+        // Start countdown timers
+        function startOrderTimers(order) {
+            order.items.forEach(item => {
+                const timerId = `timer-${order.order_id}-${item.dish_key}`;
+                const timerElement = document.getElementById(timerId);
+                
+                if (!timerElement) return;
+                
+                let secondsRemaining = item.cook_time_minutes * 60;
+                
+                const interval = setInterval(() => {
+                    secondsRemaining--;
+                    
+                    if (secondsRemaining <= 0) {
+                        clearInterval(interval);
+                        timerElement.textContent = '✅ READY';
+                        timerElement.classList.add('ready');
+                        
+                        // Mark order as ready
+                        const orderCard = document.getElementById(`order-${order.order_id}`);
+                        if (orderCard) {
+                            orderCard.classList.add('ready');
+                        }
+                        
+                        showToast(`🔔 Table ${order.table_number} is READY!`);
+                        
+                        // Play alert sound (would add audio element)
+                        
+                    } else {
+                        const minutes = Math.floor(secondsRemaining / 60);
+                        const seconds = secondsRemaining % 60;
+                        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        
+                        // Warning when < 2 minutes
+                        if (secondsRemaining <= 120 && secondsRemaining > 0) {
+                            timerElement.classList.add('warning');
+                        }
+                    }
+                }, 1000);
+                
+                timerIntervals[timerId] = interval;
+            });
+        }
+
+        // Show allergen alert
+        function showAllergenAlert(warning) {
+            const container = document.getElementById('orders');
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'allergen-alert';
+            alertDiv.innerHTML = `
+                <h3>🚨 ALLERGEN ALERT</h3>
+                <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">
+                    <strong>${warning.dish}</strong> contains ${warning.allergens.join(', ')}
+                </p>
+                <p style="font-size: 1rem; opacity: 0.9;">
+                    ${warning.message}
+                </p>
+            `;
+            
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Remove after 10 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 10000);
+        }
+
+        // Update order count
+        function updateOrderCount() {
+            document.getElementById('active-count').textContent = Object.keys(orders).length;
+        }
+
+        // Load analytics
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_URL}/api/analytics`);
+                const data = await response.json();
+                
+                document.getElementById('total-orders').textContent = data.total_orders_today || 0;
+                
+                if (data.time_saved_vs_manual) {
+                    const minutes = parseFloat(data.time_saved_vs_manual);
+                    document.getElementById('time-saved').textContent = Math.round(minutes);
+                }
+                
+            } catch (error) {
+                console.error('Analytics error:', error);
+            }
+        }
+
+        // Load inventory
+        async function loadInventory() {
+            try {
+                const response = await fetch(`${API_URL}/api/inventory`);
+                const data = await response.json();
+                
+                const inventoryList = document.getElementById('inventory-list');
+                inventoryList.innerHTML = '';
+                
+                const icons = {
+                    ribeye: '🥩',
+                    salmon: '🐟',
+                    pasta: '🍝',
+                    chicken: '🍗',
+                    romaine: '🥬'
+                };
+                
+                for (const [item, details] of Object.entries(data.inventory)) {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `inventory-item ${details.status}`;
+                    itemDiv.innerHTML = `
+                        <span>${icons[item] || '📦'} ${item.charAt(0).toUpperCase() + item.slice(1)}</span>
+                        <span class="stock-badge ${details.status}">${details.quantity} left</span>
+                    `;
+                    inventoryList.appendChild(itemDiv);
+                }
+                
+            } catch (error) {
+                console.error('Inventory error:', error);
+            }
+        }
+
+        // Show toast
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('error');
+            if (isError) toast.classList.add('error');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Run demo scenarios
+        async function runDemo(scenario) {
+            const demos = {
+                'dinner-rush': {
+                    endpoint: '/api/demo/dinner-rush',
+                    message: '🍽️ Dinner rush simulated - 5 orders created!'
+                },
+                'multilingual': {
+                    endpoint: '/api/demo/multilingual-conversation',
+                    message: '🌍 Multilingual conversation simulated - EN ↔ ES!'
+                },
+                'allergen': {
+                    endpoint: '/api/demo/allergen-alert',
+                    message: '🚨 Allergen alert triggered - Table 12 dairy/gluten allergy!'
+                },
+                'reset': {
+                    endpoint: '/api/demo/reset',
+                    message: '🔄 Kitchen reset to clean state'
+                }
+            };
+            
+            const demo = demos[scenario];
+            if (!demo) return;
+            
+            try {
+                const response = await fetch(`${API_URL}${demo.endpoint}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (scenario === 'dinner-rush') {
+                    // Reload orders
+                    await loadActiveOrders();
+                } else if (scenario === 'multilingual') {
+                    // Show conversation
+                    if (data.conversation) {
+                        data.conversation.forEach((msg, i) => {
+                            setTimeout(() => {
+                                addMessage(
+                                    msg.speaker,
+                                    msg.language,
+                                    msg.original,
+                                    msg.translations ? msg.translations.en : null
+                                );
+                            }, i * 1000);
+                        });
+                    }
+                } else if (scenario === 'allergen') {
+                    if (data.allergen_warnings && data.allergen_warnings.length > 0) {
+                        showAllergenAlert(data.allergen_warnings[0]);
+                    }
+                    if (data.order) {
+                        addOrder(data.order);
+                    }
+                } else if (scenario === 'reset') {
+                    // Clear everything
+                    orders = {};
+                    document.getElementById('orders').innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: #64748b;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
+                            <h3>No Active Orders</h3>
+                            <p style="margin-top: 0.5rem;">Kitchen reset - ready for service</p>
+                        </div>
+                    `;
+                    document.getElementById('conversation').innerHTML = `
+                        <div style="text-align: center; color: #64748b; padding: 2rem;">
+                            Conversation cleared
+                        </div>
+                    `;
+                    updateOrderCount();
+                }
+                
+                showToast(demo.message);
+                loadAnalytics();
+                loadInventory();
+                
+            } catch (error) {
+                console.error('Demo error:', error);
+                showToast('⚠️ Demo failed - check backend connection', true);
+            }
+        }
+
+        // Load active orders from API
+        async function loadActiveOrders() {
+            try {
+                const response = await fetch(`${API_URL}/api/orders/active`);
+                const data = await response.json();
+                
+                if (data.orders && data.orders.length > 0) {
+                    const container = document.getElementById('orders');
+                    container.innerHTML = '';
+                    
+                    data.orders.forEach(order => {
+                        addOrder(order);
+                    });
+                }
+                
+                updateOrderCount();
+                
+            } catch (error) {
+                console.error('Load orders error:', error);
+            }
+        }
+
+        // Initialize on load
+        window.onload = async function() {
+            console.log('👨‍🍳 ChefMate Voice Dashboard Initializing...');
+            
+            try {
+                // Test backend connection
+                const response = await fetch(`${API_URL}/api/health`);
+                const health = await response.json();
+                
+                if (health.status === 'healthy') {
+                    showToast('✅ Connected to ChefMate Voice backend');
+                    
+                    // Load initial data
+                    await loadAnalytics();
+                    await loadInventory();
+                    await loadActiveOrders();
+                } else {
+                    showToast('⚠️ Backend issues detected', true);
+                }
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                showToast('⚠️ Backend offline - Demo mode active', true);
+            }
+            
+            console.log('✅ Dashboard Ready!');
+        };
+
+        // Refresh data every 5 seconds
+        setInterval(() => {
+            loadAnalytics();
+            loadInventory();
+        }, 5000);
+    </script>
+</body>
+</html>

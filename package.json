@@ -1,0 +1,28 @@
+{
+  "name": "chefmate-voice",
+  "version": "1.0.0",
+  "description": "👨‍🍳 Multilingual Kitchen Voice Command System - Real-time translation &amp; order management using Speechmatics + MiniMax + ArmorIQ",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevegeorge2002/chefmate-voice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/stevegeorge2002/chefmate-voice/issues"
+  },
+  "homepage": "https://github.com/stevegeorge2002/chefmate-voice#readme",
+  "dependencies": {
+    "convex": "^1.32.0"
+  }
+}
