@@ -3,960 +3,1069 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👨‍🍳 ChefMate Voice - Kitchen Display</title>
+    <title>ChefMate Voice Enterprise — Kitchen Command Center</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍🍳</text></svg>">
     <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-panel: #1a2235;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --accent: #e94560;
+            --accent-glow: rgba(233, 69, 96, 0.4);
+            --accent-light: #ff6b9d;
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.3);
+            --yellow: #f59e0b;
+            --yellow-glow: rgba(245, 158, 11, 0.3);
+            --red: #ef4444;
+            --red-glow: rgba(239, 68, 68, 0.3);
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --text: #f1f5f9;
+            --text-dim: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(233, 69, 96, 0.2);
+            --radius: 0.75rem;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text); overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #1a1a2e;
-            color: white;
-            overflow-x: hidden;
-        }
-
+        /* ===== TOP BAR ===== */
         .top-bar {
-            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid #e94560;
-            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
-            flex-wrap: wrap;
-            gap: 1rem;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-panel));
+            padding: 0.75rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--accent);
+            box-shadow: 0 4px 30px var(--accent-glow);
+            position: sticky; top: 0; z-index: 100;
         }
+        .logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon { font-size: 2rem; animation: chef-bounce 3s ease-in-out infinite; }
+        @keyframes chef-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+        .logo h1 { font-size: 1.5rem; background: linear-gradient(135deg,var(--accent),var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; letter-spacing:-0.5px; }
+        .logo .edition { font-size:0.65rem; background:var(--accent); color:white; padding:2px 8px; border-radius:4px; font-weight:700; letter-spacing:1px; margin-left:0.5rem; vertical-align:super; }
 
-        .logo { display: flex; align-items: center; gap: 1rem; }
-        .logo-icon {
-            font-size: 3rem;
-            filter: drop-shadow(0 0 20px #e94560);
-            animation: chef-bounce 2s ease-in-out infinite;
-        }
-        @keyframes chef-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        .logo-text h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #e94560, #ff6b9d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-        }
-        .logo-text p { font-size: 1rem; color: #94a3b8; font-weight: 500; }
+        .top-controls { display:flex; align-items:center; gap:1rem; }
+        .clock { font-family:'Courier New',monospace; font-size:1.1rem; color:var(--accent); font-weight:700; }
+        .status-dot { width:10px; height:10px; border-radius:50%; background:var(--green); display:inline-block; animation:pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.7)} 50%{box-shadow:0 0 0 8px rgba(16,185,129,0)} }
 
-        .voice-button {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e94560, #ff6b9d);
-            border: none; font-size: 2.5rem; cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 32px rgba(233, 69, 96, 0.5);
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column;
-        }
-        .voice-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 40px rgba(233, 69, 96, 0.7);
-        }
-        .voice-button.listening {
-            animation: pulse-record 1.5s infinite;
-            background: #ef4444;
-        }
-        @keyframes pulse-record {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-        }
-        .voice-status { font-size: 0.6rem; margin-top: 4px; color: white; }
+        .lang-bar { display:flex; gap:4px; }
+        .lang-btn { padding:4px 10px; background:transparent; border:1.5px solid transparent; border-radius:4px; color:var(--text-dim); cursor:pointer; font-weight:600; font-size:0.8rem; transition:all 0.2s; }
+        .lang-btn.active { background:var(--accent); border-color:var(--accent-light); color:white; }
+        .lang-btn:hover { border-color:var(--accent); }
 
-        .language-selector {
-            display: flex; gap: 0.5rem;
-            background: rgba(255,255,255,0.1);
-            padding: 0.5rem; border-radius: 0.75rem;
+        .voice-btn {
+            width:60px; height:60px; border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-light));
+            border:none; font-size:1.5rem; cursor:pointer;
+            box-shadow:0 4px 20px var(--accent-glow);
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.3s; position:relative;
         }
-        .lang-btn {
-            padding: 0.5rem 1rem; background: transparent;
-            border: 2px solid transparent; border-radius: 0.5rem;
-            color: white; cursor: pointer; font-weight: 600; transition: all 0.3s;
-        }
-        .lang-btn.active { background: #e94560; border-color: #ff6b9d; }
-        .lang-btn:hover { border-color: #e94560; }
+        .voice-btn:hover { transform:scale(1.1); box-shadow:0 8px 30px var(--accent-glow); }
+        .voice-btn.listening { background:var(--red); animation:pulse-rec 1.5s infinite; }
+        @keyframes pulse-rec { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.7)} 50%{box-shadow:0 0 0 15px rgba(239,68,68,0)} }
+        .voice-label { position:absolute; bottom:-16px; font-size:0.55rem; color:var(--text-dim); white-space:nowrap; }
 
-        .dashboard {
-            display: grid;
-            grid-template-columns: 400px 1fr 350px;
-            gap: 1.5rem; padding: 1.5rem;
-            min-height: calc(100vh - 150px);
+        /* ===== TAB NAV ===== */
+        .tab-nav {
+            display:flex; gap:0; background:var(--bg-secondary);
+            border-bottom:2px solid var(--border); padding:0 1rem;
         }
-        .panel {
-            background: #16213e; border-radius: 1rem; padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            border: 2px solid rgba(233, 69, 96, 0.3);
+        .tab-btn {
+            padding:0.75rem 1.5rem; background:transparent; border:none;
+            color:var(--text-dim); font-weight:600; font-size:0.9rem;
+            cursor:pointer; border-bottom:3px solid transparent;
+            transition:all 0.2s; display:flex; align-items:center; gap:0.5rem;
         }
-        .panel-header {
-            font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;
-            color: #e94560; display: flex; justify-content: space-between;
-            align-items: center; text-transform: uppercase; letter-spacing: 2px;
-        }
+        .tab-btn:hover { color:var(--text); background:rgba(255,255,255,0.03); }
+        .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+        .tab-badge { background:var(--accent); color:white; font-size:0.7rem; padding:1px 7px; border-radius:10px; font-weight:700; }
 
-        .transcript-box {
-            background: #0f3460; border-radius: 0.75rem; padding: 1.5rem;
-            min-height: 120px; margin-bottom: 1.5rem; border: 2px solid #e94560;
-        }
-        .transcript-text { font-size: 1.15rem; line-height: 1.6; color: #94a3b8; font-style: italic; }
-        .transcript-text.active { color: white; animation: typing 0.5s; }
-        @keyframes typing { from { opacity: 0.5; } to { opacity: 1; } }
+        /* ===== VIEWS ===== */
+        .view { display:none; padding:1rem; min-height:calc(100vh - 120px); }
+        .view.active { display:block; }
 
-        .orders-container {
-            display: flex; flex-direction: column; gap: 1rem;
-            max-height: calc(100vh - 400px); overflow-y: auto;
+        /* ===== KDS VIEW ===== */
+        .kds-layout { display:grid; grid-template-columns:320px 1fr 300px; gap:1rem; height:calc(100vh - 130px); }
+        .kds-left, .kds-right { display:flex; flex-direction:column; gap:1rem; overflow-y:auto; }
+        .kds-center { display:flex; flex-direction:column; gap:1rem; overflow-y:auto; }
+
+        .panel { background:var(--bg-panel); border-radius:var(--radius); padding:1rem; border:1px solid var(--border); }
+        .panel-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
+        .panel-hdr h3 { font-size:0.85rem; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; font-weight:700; }
+        .panel-hdr .badge { background:var(--accent); color:white; padding:2px 8px; border-radius:8px; font-size:0.75rem; font-weight:700; }
+
+        /* Command Input */
+        .cmd-input-wrap { display:flex; gap:0.5rem; margin-bottom:0.75rem; }
+        .cmd-input {
+            flex:1; padding:0.7rem 1rem; background:var(--bg-input); border:1.5px solid var(--border);
+            border-radius:var(--radius); color:var(--text); font-size:0.9rem; outline:none; transition:border 0.2s;
         }
+        .cmd-input:focus { border-color:var(--accent); }
+        .cmd-input::placeholder { color:var(--text-muted); }
+        .cmd-send {
+            padding:0.7rem 1.2rem; background:var(--accent); border:none; border-radius:var(--radius);
+            color:white; font-weight:700; cursor:pointer; transition:all 0.2s; font-size:0.85rem;
+        }
+        .cmd-send:hover { background:var(--accent-light); transform:translateY(-1px); }
+
+        /* Transcript */
+        .transcript-box { background:var(--bg-input); border:1.5px solid var(--accent); border-radius:var(--radius); padding:1rem; margin-bottom:0.75rem; min-height:60px; }
+        .transcript-text { color:var(--text-dim); font-style:italic; font-size:0.9rem; line-height:1.5; }
+        .transcript-text.active { color:var(--text); animation:fade-in 0.3s; }
+
+        /* Conversation */
+        .conv-feed { max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:0.4rem; }
+        .conv-msg { padding:0.6rem; border-radius:0.5rem; animation:fade-in 0.3s; font-size:0.85rem; }
+        @keyframes fade-in { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+        .conv-msg.chef { background:rgba(233,69,96,0.15); border-left:3px solid var(--accent); }
+        .conv-msg.line_cook_1,.conv-msg.line_cook_2,.conv-msg.prep_cook { background:rgba(16,185,129,0.15); border-left:3px solid var(--green); }
+        .conv-msg.server_1,.conv-msg.server_2 { background:rgba(59,130,246,0.15); border-left:3px solid var(--blue); }
+        .conv-msg .msg-hdr { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-bottom:3px; }
+        .conv-msg .msg-hdr .speaker { font-weight:700; color:var(--text-dim); }
+        .conv-msg .msg-text { line-height:1.3; }
+        .conv-msg .msg-trans { font-size:0.8rem; color:var(--text-muted); font-style:italic; margin-top:3px; }
+
+        /* Order Cards */
         .order-card {
-            background: #0f3460; border-radius: 0.875rem; padding: 1.25rem;
-            border-left: 6px solid #e94560; animation: slide-in 0.4s ease-out;
-            transition: all 0.3s;
+            background:var(--bg-card); border-radius:var(--radius); padding:1rem;
+            border-left:5px solid var(--accent); animation:slide-in 0.4s ease-out;
+            transition:all 0.3s; position:relative;
         }
-        @keyframes slide-in {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .order-card:hover { transform: translateX(8px); box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4); }
-        .order-card.ready {
-            border-left-color: #10b981;
-            background: linear-gradient(135deg, #0f3460, #064e3b);
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-        }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .table-number { font-size: 1.75rem; font-weight: 800; color: #e94560; }
-        .order-id { font-size: 0.875rem; color: #64748b; font-family: 'Courier New', monospace; }
-        .order-items { display: grid; gap: 0.75rem; }
-        .item-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem;
-        }
-        .item-name { font-weight: 600; font-size: 1.1rem; }
-        .item-temp { font-size: 0.875rem; color: #94a3b8; }
-        .timer {
-            font-family: 'Courier New', monospace; font-size: 1.5rem; font-weight: 700;
-            padding: 0.5rem 1rem; background: #1e293b; border-radius: 0.5rem;
-        }
-        .timer.warning { color: #fbbf24; animation: blink 1s infinite; }
-        .timer.ready { color: #10b981; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes slide-in { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
+        .order-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+        .order-card.rush { border-left-color:var(--red); }
+        .order-card.rush::before { content:'RUSH'; position:absolute; top:0.5rem; right:0.5rem; background:var(--red); color:white; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700; animation:blink 1s infinite; }
+        .order-card.ready { border-left-color:var(--green); background:linear-gradient(135deg,var(--bg-card),rgba(16,185,129,0.1)); }
+        .order-card.ready::after { content:'✓ READY'; position:absolute; top:0.5rem; right:0.5rem; background:var(--green); color:white; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
+        .order-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; }
+        .order-table { font-size:1.3rem; font-weight:800; color:var(--accent); }
+        .order-id { font-size:0.7rem; color:var(--text-muted); font-family:'Courier New',monospace; }
+        .order-meta { display:flex; gap:0.5rem; margin-bottom:0.6rem; flex-wrap:wrap; }
+        .order-tag { font-size:0.65rem; padding:2px 8px; border-radius:4px; font-weight:600; }
+        .tag-station { background:rgba(139,92,246,0.2); color:var(--purple); border:1px solid var(--purple); }
+        .tag-course { background:rgba(59,130,246,0.2); color:var(--blue); border:1px solid var(--blue); }
+        .tag-time { background:rgba(245,158,11,0.2); color:var(--yellow); border:1px solid var(--yellow); }
+
+        .order-items { display:flex; flex-direction:column; gap:0.4rem; }
+        .item-row { display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:rgba(255,255,255,0.03); border-radius:0.4rem; }
+        .item-info .item-name { font-weight:600; font-size:0.9rem; }
+        .item-info .item-detail { font-size:0.75rem; color:var(--text-muted); }
+        .item-timer { font-family:'Courier New',monospace; font-size:1.1rem; font-weight:700; padding:3px 8px; background:var(--bg-input); border-radius:4px; }
+        .item-timer.warning { color:var(--yellow); animation:blink 1s infinite; }
+        .item-timer.critical { color:var(--red); animation:blink 0.5s infinite; }
+        .item-timer.done { color:var(--green); }
+
+        .order-actions { display:flex; gap:0.4rem; margin-top:0.6rem; }
+        .order-action-btn {
+            flex:1; padding:0.4rem; background:var(--bg-input); border:1px solid var(--border);
+            border-radius:4px; color:var(--text-dim); font-size:0.7rem; font-weight:600;
+            cursor:pointer; transition:all 0.2s; text-align:center;
+        }
+        .order-action-btn:hover { background:var(--accent); color:white; border-color:var(--accent); }
+        .order-action-btn.complete:hover { background:var(--green); border-color:var(--green); }
+
+        /* Allergen Alert */
         .allergen-alert {
-            background: linear-gradient(135deg, #dc2626, #991b1b);
-            padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1rem;
-            border: 3px solid #fca5a5; animation: shake 0.5s, pulse-red 2s infinite;
+            background:linear-gradient(135deg,#dc2626,#991b1b); padding:1rem; border-radius:var(--radius);
+            border:2px solid #fca5a5; animation:shake 0.5s, pulse-red 2s infinite;
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        @keyframes pulse-red {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            50% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
-        }
-        .allergen-alert h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+        @keyframes pulse-red { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.7)} 50%{box-shadow:0 0 0 12px rgba(220,38,38,0)} }
+        .allergen-alert h4 { font-size:1rem; margin-bottom:0.3rem; }
+        .allergen-alert p { font-size:0.85rem; opacity:0.9; }
 
-        .inventory-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.75rem; background: #0f3460; border-radius: 0.5rem; margin-bottom: 0.5rem;
+        /* Station Filter */
+        .station-filter { display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.75rem; }
+        .station-btn {
+            padding:0.4rem 0.8rem; background:var(--bg-input); border:1.5px solid var(--border);
+            border-radius:var(--radius); color:var(--text-dim); font-size:0.75rem; font-weight:600;
+            cursor:pointer; transition:all 0.2s;
         }
-        .inventory-item.low { background: linear-gradient(135deg, #92400e, #78350f); border: 2px solid #fbbf24; }
-        .inventory-item.out { background: linear-gradient(135deg, #7f1d1d, #991b1b); border: 2px solid #dc2626; }
-        .stock-badge { padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 700; font-size: 0.875rem; }
-        .stock-badge.ok { background: #10b981; color: white; }
-        .stock-badge.low { background: #fbbf24; color: #1a1a2e; }
-        .stock-badge.out { background: #dc2626; color: white; }
+        .station-btn.active { background:var(--accent); border-color:var(--accent-light); color:white; }
+        .station-btn:hover { border-color:var(--accent); }
 
-        .demo-controls {
-            position: fixed; bottom: 2rem; right: 2rem;
-            background: linear-gradient(135deg, #16213e, #0f3460);
-            padding: 1.5rem; border-radius: 1rem;
-            box-shadow: 0 12px 48px rgba(0,0,0,0.6);
-            border: 3px solid #e94560; z-index: 100;
+        /* ===== RIGHT PANEL ===== */
+        .stat-card { background:var(--bg-card); padding:0.75rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:0.5rem; }
+        .stat-card h4 { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+        .stat-val { font-size:1.8rem; font-weight:800; color:var(--accent); font-family:'Courier New',monospace; }
+        .stat-label { font-size:0.7rem; color:var(--text-muted); }
+
+        .inv-item { display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:var(--bg-card); border-radius:0.4rem; margin-bottom:0.3rem; font-size:0.85rem; }
+        .inv-item.low { border:1px solid var(--yellow); background:rgba(245,158,11,0.05); }
+        .inv-item.out { border:1px solid var(--red); background:rgba(239,68,68,0.05); }
+        .inv-badge { padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.7rem; }
+        .inv-badge.ok { background:var(--green); color:white; }
+        .inv-badge.low { background:var(--yellow); color:#1a1a2e; }
+        .inv-badge.out { background:var(--red); color:white; }
+
+        /* Staff */
+        .staff-item { display:flex; justify-content:space-between; align-items:center; padding:0.5rem; background:var(--bg-card); border-radius:0.4rem; margin-bottom:0.3rem; font-size:0.8rem; }
+        .staff-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+        .staff-dot.on { background:var(--green); }
+        .staff-dot.off { background:var(--text-muted); }
+
+        /* ===== ANALYTICS VIEW ===== */
+        .analytics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .analytics-card { background:var(--bg-panel); border-radius:var(--radius); padding:1.25rem; border:1px solid var(--border); text-align:center; }
+        .analytics-card .big-num { font-size:3rem; font-weight:900; font-family:'Courier New',monospace; }
+        .analytics-card .big-num.green { color:var(--green); }
+        .analytics-card .big-num.accent { color:var(--accent); }
+        .analytics-card .big-num.yellow { color:var(--yellow); }
+        .analytics-card .big-num.blue { color:var(--blue); }
+        .analytics-card h4 { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.3rem; }
+
+        .chart-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+        .chart-panel { background:var(--bg-panel); border-radius:var(--radius); padding:1.25rem; border:1px solid var(--border); }
+        .chart-panel h3 { font-size:0.85rem; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; }
+
+        .bar-chart { display:flex; align-items:flex-end; gap:0.5rem; height:160px; padding-top:1rem; }
+        .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.3rem; }
+        .bar { width:100%; border-radius:4px 4px 0 0; transition:height 1s ease-out; min-height:4px; }
+        .bar-label { font-size:0.65rem; color:var(--text-muted); }
+        .bar-value { font-size:0.7rem; font-weight:700; color:var(--text); }
+
+        .perf-row { display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border); }
+        .perf-row:last-child { border-bottom:none; }
+        .perf-label { font-size:0.85rem; color:var(--text-dim); }
+        .perf-bar-wrap { flex:1; margin:0 1rem; height:8px; background:var(--bg-input); border-radius:4px; overflow:hidden; }
+        .perf-bar { height:100%; border-radius:4px; transition:width 1s ease-out; }
+        .perf-val { font-size:0.85rem; font-weight:700; min-width:50px; text-align:right; }
+
+        /* Timeline */
+        .timeline { position:relative; padding-left:1.5rem; }
+        .timeline::before { content:''; position:absolute; left:5px; top:0; bottom:0; width:2px; background:var(--border); }
+        .tl-item { position:relative; margin-bottom:1rem; }
+        .tl-item::before { content:''; position:absolute; left:-1.5rem; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--accent); background:var(--bg-panel); }
+        .tl-item.completed::before { background:var(--green); border-color:var(--green); }
+        .tl-time { font-size:0.7rem; color:var(--text-muted); }
+        .tl-text { font-size:0.85rem; color:var(--text-dim); }
+
+        /* ===== STAFF VIEW ===== */
+        .staff-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+        .staff-card { background:var(--bg-panel); border-radius:var(--radius); padding:1.25rem; border:1px solid var(--border); }
+        .staff-card .avatar { width:50px; height:50px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:0.75rem; }
+        .staff-card h3 { font-size:1rem; margin-bottom:0.3rem; }
+        .staff-card .role { font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem; }
+        .staff-card .staff-stats { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+        .staff-stat { text-align:center; padding:0.4rem; background:var(--bg-card); border-radius:4px; }
+        .staff-stat .val { font-size:1.2rem; font-weight:700; color:var(--accent); }
+        .staff-stat .lbl { font-size:0.65rem; color:var(--text-muted); }
+
+        /* ===== DEMO PANEL ===== */
+        .demo-panel {
+            position:fixed; bottom:1rem; right:1rem;
+            background:var(--bg-panel); padding:1rem; border-radius:var(--radius);
+            border:2px solid var(--accent); box-shadow:0 8px 40px rgba(0,0,0,0.6);
+            z-index:200; min-width:200px;
         }
+        .demo-panel h4 { color:var(--accent); margin-bottom:0.75rem; text-align:center; font-size:0.85rem; letter-spacing:1px; }
         .demo-btn {
-            width: 100%; padding: 1rem; margin-bottom: 0.75rem;
-            background: #0f3460; border: 2px solid #e94560; border-radius: 0.75rem;
-            color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            width:100%; padding:0.6rem; margin-bottom:0.4rem;
+            background:var(--bg-input); border:1.5px solid var(--border); border-radius:var(--radius);
+            color:var(--text); font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s;
         }
-        .demo-btn:hover { background: #e94560; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5); }
+        .demo-btn:hover { background:var(--accent); border-color:var(--accent-light); transform:translateY(-2px); box-shadow:0 4px 15px var(--accent-glow); }
+        .demo-toggle {
+            position:fixed; bottom:1rem; right:1rem; width:50px; height:50px;
+            background:var(--accent); border:none; border-radius:50%; font-size:1.5rem;
+            cursor:pointer; z-index:199; box-shadow:0 4px 20px var(--accent-glow); display:none;
+        }
 
+        /* Toast */
         .toast {
-            position: fixed; top: 120px; right: 2rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white; padding: 1.5rem 2rem; border-radius: 0.75rem;
-            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
-            font-weight: 600; font-size: 1.1rem;
-            transform: translateX(500px);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000; max-width: 450px;
+            position:fixed; top:70px; right:1rem; max-width:400px;
+            background:var(--green); color:white; padding:1rem 1.5rem; border-radius:var(--radius);
+            box-shadow:0 8px 30px rgba(0,0,0,0.5); font-weight:600; font-size:0.9rem;
+            transform:translateX(500px); transition:transform 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+            z-index:1000;
         }
-        .toast.show { transform: translateX(0); }
-        .toast.error { background: linear-gradient(135deg, #dc2626, #991b1b); }
+        .toast.show { transform:translateX(0); }
+        .toast.error { background:var(--red); }
+        .toast.warning { background:var(--yellow); color:#1a1a2e; }
 
-        .stat-card {
-            background: linear-gradient(135deg, #0f3460, #16213e);
-            padding: 1.25rem; border-radius: 0.875rem; margin-bottom: 1rem;
-            border: 2px solid rgba(233, 69, 96, 0.3);
-        }
-        .stat-card h3 { font-size: 0.875rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; }
-        .stat-value { font-size: 2.5rem; font-weight: 800; color: #e94560; font-family: 'Courier New', monospace; }
-        .stat-label { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
-
-        .conversation-feed {
-            background: #0f3460; border-radius: 0.75rem; padding: 1rem;
-            max-height: 300px; overflow-y: auto; margin-top: 1rem;
-        }
-        .message { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.5rem; animation: fade-in 0.3s; }
-        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .message.chef { background: rgba(233, 69, 96, 0.2); border-left: 4px solid #e94560; }
-        .message.line_cook_1, .message.line_cook_2, .message.server_2 { background: rgba(16, 185, 129, 0.2); border-left: 4px solid #10b981; }
-        .message.server_1 { background: rgba(59, 130, 246, 0.2); border-left: 4px solid #3b82f6; }
-        .message-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.75rem; color: #94a3b8; }
-        .message-text { font-size: 1rem; line-height: 1.4; }
-        .translation { font-size: 0.875rem; color: #64748b; margin-top: 0.5rem; font-style: italic; }
-
-        @media (max-width: 1400px) { .dashboard { grid-template-columns: 350px 1fr 300px; } }
-        @media (max-width: 1024px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .demo-controls { bottom: 1rem; right: 1rem; left: 1rem; }
-        }
+        /* Responsive */
+        @media(max-width:1200px) { .kds-layout{grid-template-columns:280px 1fr 260px;} .analytics-grid{grid-template-columns:repeat(2,1fr);} .staff-grid{grid-template-columns:repeat(2,1fr);} }
+        @media(max-width:900px) { .kds-layout{grid-template-columns:1fr;} .chart-row{grid-template-columns:1fr;} .tab-btn{padding:0.5rem 0.75rem;font-size:0.8rem;} }
     </style>
 </head>
 <body>
+    <!-- TOP BAR -->
     <div class="top-bar">
         <div class="logo">
-            <div class="logo-icon">👨‍🍳</div>
-            <div class="logo-text">
-                <h1>ChefMate Voice</h1>
-                <p>Hands-Free Multilingual Kitchen Management</p>
+            <span class="logo-icon">👨‍🍳</span>
+            <div>
+                <h1>ChefMate Voice <span class="edition">ENTERPRISE</span></h1>
             </div>
         </div>
-
-        <div class="language-selector">
-            <button class="lang-btn active" onclick="setLanguage('en', this)">🇺🇸 EN</button>
-            <button class="lang-btn" onclick="setLanguage('es', this)">🇪🇸 ES</button>
-            <button class="lang-btn" onclick="setLanguage('zh', this)">🇨🇳 ZH</button>
-            <button class="lang-btn" onclick="setLanguage('fr', this)">🇫🇷 FR</button>
-            <button class="lang-btn" onclick="setLanguage('vi', this)">🇻🇳 VI</button>
-        </div>
-
-        <button class="voice-button" id="voice-btn" onclick="toggleVoice()">
-            🎙️
-            <span class="voice-status" id="voice-status">Click to speak</span>
-        </button>
-    </div>
-
-    <div class="dashboard">
-        <!-- Left Panel: Voice Input & Conversation -->
-        <div class="panel">
-            <div class="panel-header">Voice Input</div>
-            <div class="transcript-box">
-                <div class="transcript-text" id="transcript">
-                    Click the microphone or type a command below...
-                </div>
+        <div class="top-controls">
+            <div><span class="status-dot"></span> <span style="font-size:0.8rem;color:var(--green);font-weight:600;" id="conn-status">LIVE</span></div>
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="lang-bar">
+                <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+                <button class="lang-btn" onclick="setLang('es',this)">ES</button>
+                <button class="lang-btn" onclick="setLang('zh',this)">ZH</button>
+                <button class="lang-btn" onclick="setLang('fr',this)">FR</button>
+                <button class="lang-btn" onclick="setLang('vi',this)">VI</button>
             </div>
-            <div style="margin-bottom: 1.5rem;">
-                <input type="text" id="text-command"
-                    placeholder="Type: 'Order fire table 5, two steaks medium-rare'"
-                    style="width: 100%; padding: 1rem; background: #0f3460; border: 2px solid #e94560; border-radius: 0.5rem; color: white; font-size: 1rem;"
-                    onkeypress="if(event.key==='Enter') sendTextCommand()"
-                />
-                <button onclick="sendTextCommand()"
-                    style="width: 100%; margin-top: 0.5rem; padding: 1rem; background: #e94560; border: none; border-radius: 0.5rem; color: white; font-weight: 700; cursor: pointer; font-size: 1rem;">
-                    Send Command
-                </button>
-            </div>
-            <div class="conversation-feed" id="conversation">
-                <div style="text-align: center; color: #64748b; padding: 2rem;">
-                    No messages yet. Start giving voice commands!
-                </div>
-            </div>
-        </div>
-
-        <!-- Center Panel: Active Orders -->
-        <div class="panel">
-            <div class="panel-header">
-                Active Orders
-                <span style="background: #e94560; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 1rem;" id="active-count">0</span>
-            </div>
-            <div class="orders-container" id="orders">
-                <div style="text-align: center; padding: 3rem; color: #64748b;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
-                    <h3>No Active Orders</h3>
-                    <p style="margin-top: 0.5rem;">Use voice commands to create orders</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Panel: Stats & Inventory -->
-        <div class="panel">
-            <div class="panel-header">Kitchen Stats</div>
-            <div class="stat-card">
-                <h3>Orders Today</h3>
-                <div class="stat-value" id="total-orders">0</div>
-                <div class="stat-label">Total processed</div>
-            </div>
-            <div class="stat-card">
-                <h3>Time Saved</h3>
-                <div class="stat-value" id="time-saved">0</div>
-                <div class="stat-label">minutes vs manual</div>
-            </div>
-            <div class="stat-card">
-                <h3>Accuracy</h3>
-                <div class="stat-value">98.5%</div>
-                <div class="stat-label">Voice recognition</div>
-            </div>
-            <div style="margin-top: 2rem;">
-                <h3 style="margin-bottom: 1rem; color: #e94560; font-size: 1.25rem;">INVENTORY</h3>
-                <div id="inventory-list"></div>
-            </div>
+            <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">🎙️<span class="voice-label" id="voice-label">VOICE</span></button>
         </div>
     </div>
 
-    <div class="demo-controls">
-        <h3 style="color: #e94560; margin-bottom: 1rem; text-align: center; font-size: 1.25rem;">🎮 DEMO</h3>
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchView('kds',this)">🍳 KDS <span class="tab-badge" id="kds-badge">0</span></button>
+        <button class="tab-btn" onclick="switchView('analytics',this)">📊 Analytics</button>
+        <button class="tab-btn" onclick="switchView('staff',this)">👥 Staff</button>
+        <button class="tab-btn" onclick="switchView('log',this)">📋 Order Log</button>
+    </div>
+
+    <!-- ===== KDS VIEW ===== -->
+    <div class="view active" id="view-kds">
+        <div class="kds-layout">
+            <!-- LEFT: Input & Conversation -->
+            <div class="kds-left">
+                <div class="panel">
+                    <div class="panel-hdr"><h3>Command</h3></div>
+                    <div class="transcript-box"><div class="transcript-text" id="transcript">Click mic or type a command...</div></div>
+                    <div class="cmd-input-wrap">
+                        <input class="cmd-input" id="text-cmd" placeholder="e.g. fire table 5 two steaks medium-rare" onkeypress="if(event.key==='Enter')sendCmd()">
+                        <button class="cmd-send" onclick="sendCmd()">FIRE</button>
+                    </div>
+                </div>
+                <div class="panel" style="flex:1;">
+                    <div class="panel-hdr"><h3>Kitchen Comms</h3><span class="badge" id="msg-count">0</span></div>
+                    <div class="conv-feed" id="conv-feed">
+                        <div style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem;">No messages yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER: Orders -->
+            <div class="kds-center">
+                <div class="station-filter">
+                    <button class="station-btn active" onclick="filterStation('all',this)">All Stations</button>
+                    <button class="station-btn" onclick="filterStation('grill',this)">🔥 Grill</button>
+                    <button class="station-btn" onclick="filterStation('saute',this)">🍳 Sauté</button>
+                    <button class="station-btn" onclick="filterStation('cold',this)">🥗 Cold</button>
+                    <button class="station-btn" onclick="filterStation('prep',this)">🔪 Prep</button>
+                </div>
+                <div id="orders-container">
+                    <div style="text-align:center;padding:4rem;color:var(--text-muted);">
+                        <div style="font-size:4rem;margin-bottom:1rem;opacity:0.3;">🍳</div>
+                        <h3 style="color:var(--text-dim);">No Active Orders</h3>
+                        <p style="margin-top:0.5rem;font-size:0.85rem;">Use voice commands or demo buttons to start</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Stats & Inventory -->
+            <div class="kds-right">
+                <div class="panel">
+                    <div class="panel-hdr"><h3>Live Stats</h3></div>
+                    <div class="stat-card"><h4>Active Orders</h4><div class="stat-val" id="stat-active">0</div></div>
+                    <div class="stat-card"><h4>Completed Today</h4><div class="stat-val" id="stat-completed">0</div></div>
+                    <div class="stat-card"><h4>Avg Cook Time</h4><div class="stat-val" id="stat-avg-cook">0<span style="font-size:0.8rem;color:var(--text-muted);">min</span></div></div>
+                    <div class="stat-card"><h4>Time Saved</h4><div class="stat-val" id="stat-time-saved">0<span style="font-size:0.8rem;color:var(--text-muted);">min</span></div></div>
+                </div>
+                <div class="panel" style="flex:1;">
+                    <div class="panel-hdr"><h3>Inventory</h3></div>
+                    <div id="inv-list"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-hdr"><h3>On Shift</h3></div>
+                    <div id="staff-sidebar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ANALYTICS VIEW ===== -->
+    <div class="view" id="view-analytics">
+        <div class="analytics-grid">
+            <div class="analytics-card"><div class="big-num accent" id="an-total">0</div><h4>Total Orders</h4></div>
+            <div class="analytics-card"><div class="big-num green" id="an-completed">0</div><h4>Completed</h4></div>
+            <div class="analytics-card"><div class="big-num yellow" id="an-avg">0m</div><h4>Avg Cook Time</h4></div>
+            <div class="analytics-card"><div class="big-num blue" id="an-voice">0</div><h4>Voice Commands</h4></div>
+        </div>
+        <div class="chart-row">
+            <div class="chart-panel">
+                <h3>Orders by Hour</h3>
+                <div class="bar-chart" id="hourly-chart"></div>
+            </div>
+            <div class="chart-panel">
+                <h3>Popular Dishes</h3>
+                <div id="dish-chart"></div>
+            </div>
+        </div>
+        <div class="chart-row">
+            <div class="chart-panel">
+                <h3>Kitchen Performance</h3>
+                <div id="perf-metrics"></div>
+            </div>
+            <div class="chart-panel">
+                <h3>Activity Timeline</h3>
+                <div class="timeline" id="timeline"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== STAFF VIEW ===== -->
+    <div class="view" id="view-staff">
+        <div class="staff-grid" id="staff-grid"></div>
+    </div>
+
+    <!-- ===== ORDER LOG VIEW ===== -->
+    <div class="view" id="view-log">
+        <div class="panel">
+            <div class="panel-hdr"><h3>Complete Order History</h3><span class="badge" id="log-count">0</span></div>
+            <div id="order-log" style="max-height:calc(100vh - 220px);overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <!-- DEMO CONTROLS -->
+    <div class="demo-panel" id="demo-panel">
+        <h4>🎮 DEMO</h4>
         <button class="demo-btn" onclick="runDemo('dinner-rush')">🍽️ Dinner Rush</button>
-        <button class="demo-btn" onclick="runDemo('multilingual')">🌍 Multilingual Chat</button>
+        <button class="demo-btn" onclick="runDemo('multilingual')">🌍 Multilingual</button>
         <button class="demo-btn" onclick="runDemo('allergen')">🚨 Allergen Alert</button>
-        <button class="demo-btn" onclick="runDemo('reset')">🔄 Reset Kitchen</button>
+        <button class="demo-btn" onclick="runDemo('course-seq')">📋 Course Sequence</button>
+        <button class="demo-btn" onclick="runDemo('shift-change')">👥 Shift Change</button>
+        <button class="demo-btn" onclick="runDemo('reset')" style="border-color:var(--red);">🔄 Reset</button>
     </div>
 
     <div class="toast" id="toast"></div>
 
-    <script>
-    // ============================================
-    // CONFIG
-    // ============================================
-    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'http://localhost:8000'
-        : null; // null = standalone mode on GitHub Pages
+<script>
+// =============================================
+// CONFIG
+// =============================================
+const API_URL = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:8000' : null;
+let currentLang='en', recognition=null, orders={}, timerIntervals={}, orderCounter=1;
+let totalCompleted=0, voiceCommands=0, currentStation='all', msgCount=0;
+let completedLog=[], dishStats={}, hourlyStats={}, avgCookTimes=[];
+let backendConnected=false;
 
-    let currentLanguage = 'en';
-    let recognition = null;
-    let orders = {};
-    let timerIntervals = {};
-    let orderCounter = 1;
-    let totalOrdersToday = 0;
-    let backendConnected = false;
+// =============================================
+// MENU DB (Enterprise - expanded)
+// =============================================
+const MENU = {
+    steak_rare:        {name:"Steak Rare",        cook:8,  station:"grill", course:"main",  allergens:[],                         price:38},
+    steak_medium_rare: {name:"Steak Medium-Rare", cook:12, station:"grill", course:"main",  allergens:[],                         price:38},
+    steak_medium:      {name:"Steak Medium",      cook:15, station:"grill", course:"main",  allergens:[],                         price:38},
+    steak_well_done:   {name:"Steak Well-Done",   cook:18, station:"grill", course:"main",  allergens:[],                         price:38},
+    salmon:            {name:"Grilled Salmon",     cook:14, station:"grill", course:"main",  allergens:["fish"],                   price:32},
+    pasta_carbonara:   {name:"Pasta Carbonara",    cook:10, station:"saute", course:"main",  allergens:["gluten","dairy","eggs"],  price:24},
+    chicken_marsala:   {name:"Chicken Marsala",    cook:16, station:"saute", course:"main",  allergens:["dairy"],                  price:28},
+    caesar_salad:      {name:"Caesar Salad",       cook:5,  station:"cold",  course:"appetizer", allergens:["dairy","gluten"],     price:12},
+    garlic_bread:      {name:"Garlic Bread",       cook:8,  station:"prep",  course:"appetizer", allergens:["gluten","dairy"],     price:8},
+    lobster_bisque:    {name:"Lobster Bisque",     cook:6,  station:"saute", course:"appetizer", allergens:["shellfish","dairy"],  price:16},
+    tiramisu:          {name:"Tiramisu",           cook:3,  station:"cold",  course:"dessert",   allergens:["dairy","gluten","eggs"],price:14},
+    creme_brulee:      {name:"Crème Brûlée",      cook:4,  station:"cold",  course:"dessert",   allergens:["dairy","eggs"],       price:13},
+    filet_mignon:      {name:"Filet Mignon",       cook:20, station:"grill", course:"main",  allergens:[],                         price:52},
+    risotto:           {name:"Mushroom Risotto",   cook:18, station:"saute", course:"main",  allergens:["dairy"],                  price:26},
+    tuna_tartare:      {name:"Tuna Tartare",       cook:5,  station:"cold",  course:"appetizer", allergens:["fish","soy"],         price:18},
+};
 
-    // ============================================
-    // MENU DATABASE (mirrors backend/kitchen_agent.py)
-    // ============================================
-    const MENU = {
-        steak_rare:        { name: "Steak Rare",        cook_time: 8,  allergens: [],                          price: 38 },
-        steak_medium_rare: { name: "Steak Medium-Rare", cook_time: 12, allergens: [],                          price: 38 },
-        steak_medium:      { name: "Steak Medium",      cook_time: 15, allergens: [],                          price: 38 },
-        steak_well_done:   { name: "Steak Well-Done",   cook_time: 18, allergens: [],                          price: 38 },
-        salmon:            { name: "Grilled Salmon",     cook_time: 14, allergens: ["fish"],                    price: 32 },
-        pasta_carbonara:   { name: "Pasta Carbonara",    cook_time: 10, allergens: ["gluten", "dairy", "eggs"], price: 24 },
-        chicken_marsala:   { name: "Chicken Marsala",    cook_time: 16, allergens: ["dairy"],                   price: 28 },
-        caesar_salad:      { name: "Caesar Salad",       cook_time: 5,  allergens: ["dairy", "gluten"],         price: 12 },
-        garlic_bread:      { name: "Garlic Bread",       cook_time: 8,  allergens: ["gluten", "dairy"],         price: 8  },
+const CUSTOMER_ALLERGIES = {5:[], 12:["dairy","gluten"], 3:["peanuts"], 7:["shellfish"], 15:["tree_nuts"], 8:["fish","eggs"], 20:["soy"]};
+
+let inventory = {ribeye:50, salmon:20, pasta:100, chicken:35, romaine:30, lobster:15, cream:60, flour:80, eggs:90, tuna:12};
+
+const STAFF = [
+    {id:"chef",       name:"Chef Maria",      role:"Head Chef",    lang:"en", station:"all",   avatar:"👩‍🍳", shift:"AM", ordersToday:0, clocked:true},
+    {id:"sous_chef",  name:"Carlos R.",        role:"Sous Chef",    lang:"es", station:"grill", avatar:"👨‍🍳", shift:"AM", ordersToday:0, clocked:true},
+    {id:"line_cook_1",name:"Miguel S.",        role:"Line Cook - Grill",lang:"es",station:"grill",avatar:"🔥", shift:"AM", ordersToday:0, clocked:true},
+    {id:"line_cook_2",name:"Wei Chen",         role:"Line Cook - Sauté",lang:"zh",station:"saute",avatar:"🍳", shift:"AM", ordersToday:0, clocked:true},
+    {id:"prep_cook",  name:"Anh Tran",        role:"Prep Cook",    lang:"vi", station:"prep",  avatar:"🔪", shift:"PM", ordersToday:0, clocked:false},
+    {id:"pastry",     name:"Sophie L.",        role:"Pastry Chef",  lang:"fr", station:"cold",  avatar:"🧁", shift:"AM", ordersToday:0, clocked:true},
+    {id:"server_1",   name:"Jake M.",          role:"Server Lead",  lang:"en", station:null,    avatar:"🍽️", shift:"AM", ordersToday:0, clocked:true},
+    {id:"server_2",   name:"Rosa D.",          role:"Server",       lang:"es", station:null,    avatar:"🍽️", shift:"PM", ordersToday:0, clocked:false},
+];
+
+// =============================================
+// CLOCK
+// =============================================
+setInterval(function(){
+    var now=new Date();
+    document.getElementById('clock').textContent=now.toLocaleTimeString('en-US',{hour12:false});
+},1000);
+
+// =============================================
+// VOICE RECOGNITION
+// =============================================
+function initSpeech(){
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR) return null;
+    var r=new SR(); r.continuous=false; r.interimResults=true; r.maxAlternatives=1; r.lang='en-US';
+    r.onresult=function(e){
+        var t=e.results[e.results.length-1];
+        document.getElementById('transcript').textContent='"'+t[0].transcript+'"';
+        document.getElementById('transcript').classList.add('active');
+        if(t.isFinal){
+            document.getElementById('text-cmd').value=t[0].transcript;
+            setTimeout(sendCmd,300);
+        }
     };
+    r.onerror=function(){showToast('Voice error — type instead','error');stopVoice();};
+    r.onend=function(){stopVoice();};
+    return r;
+}
+function toggleVoice(){
+    if(!recognition){recognition=initSpeech();if(!recognition){showToast('Voice not supported','error');return;}}
+    var b=document.getElementById('voice-btn');
+    if(b.classList.contains('listening')){recognition.stop();stopVoice();}
+    else{try{recognition.start();b.classList.add('listening');document.getElementById('voice-label').textContent='STOP';}catch(e){}}
+}
+function stopVoice(){var b=document.getElementById('voice-btn');b.classList.remove('listening');document.getElementById('voice-label').textContent='VOICE';}
+function setLang(l,btn){
+    currentLang=l;
+    document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    if(recognition){var m={en:'en-US',es:'es-US',zh:'zh-CN',fr:'fr-FR',vi:'vi-VN'};recognition.lang=m[l]||'en-US';}
+    showToast('Language: '+l.toUpperCase());
+}
 
-    const CUSTOMER_ALLERGIES = {
-        5: [],
-        12: ["dairy", "gluten"],
-        3: ["peanuts"],
-        7: ["shellfish"],
-        15: ["tree_nuts"]
-    };
+// =============================================
+// COMMAND PARSER (Enterprise)
+// =============================================
+function parseCmd(t){
+    var s=t.toLowerCase();
+    var action="fire";
+    if(s.indexOf("cancel")!==-1)action="cancel";
+    else if(s.indexOf("86")!==-1||s.indexOf("sold out")!==-1)action="86";
+    else if(/plated|ready|pickup|done|served/.test(s))action="plated";
+    else if(/status|how long|check/.test(s))action="status";
+    else if(/modify|change|update|switch/.test(s))action="modify";
 
-    let inventory = { ribeye: 50, salmon: 20, pasta: 100, chicken: 35, romaine: 30 };
+    var tm=s.match(/table\s+(\d+)|mesa\s+(\d+)/);
+    var table=tm?parseInt(tm[1]||tm[2]):null;
 
-    // ============================================
-    // CLIENT-SIDE COMMAND PARSER
-    // ============================================
-    function parseCommand(transcript) {
-        const t = transcript.toLowerCase();
+    var items=[];
+    // Steaks
+    var steakP=[[/steak.*medium[-\s]rare|bistec.*t[eé]rmino\s*medio/,"medium_rare"],[/steak.*medium[-\s]well/,"medium_well"],[/steak.*well[-\s]done/,"well_done"],[/steak.*medium(?![-\s])/,"medium"],[/steak.*rare/,"rare"]];
+    for(var i=0;i<steakP.length;i++){if(steakP[i][0].test(s)){var qm=s.match(/(one|two|three|four|five|dos|tres|\d)\s*steak/);var q=1;if(qm){var mp={one:1,two:2,three:3,four:4,five:5,dos:2,tres:3};q=mp[qm[1]]||parseInt(qm[1])||1;}items.push({dish:"steak",temp:steakP[i][1],qty:q});break;}}
+    // Other dishes
+    if(/filet|mignon/.test(s))items.push({dish:"filet_mignon",temp:null,qty:1});
+    if(/salmon|salm[oó]n/.test(s))items.push({dish:"salmon",temp:null,qty:1});
+    if(/pasta|carbonara/.test(s))items.push({dish:"pasta_carbonara",temp:null,qty:1});
+    if(/risotto/.test(s))items.push({dish:"risotto",temp:null,qty:1});
+    if(/caesar|salad|ensalada/.test(s))items.push({dish:"caesar_salad",temp:null,qty:1});
+    if(/chicken|pollo|marsala/.test(s))items.push({dish:"chicken_marsala",temp:null,qty:1});
+    if(/garlic\s*bread/.test(s))items.push({dish:"garlic_bread",temp:null,qty:1});
+    if(/lobster\s*bisque|bisque/.test(s))items.push({dish:"lobster_bisque",temp:null,qty:1});
+    if(/tiramisu/.test(s))items.push({dish:"tiramisu",temp:null,qty:1});
+    if(/creme\s*brulee|brûlée|brulee/.test(s))items.push({dish:"creme_brulee",temp:null,qty:1});
+    if(/tuna\s*tartare|tartare/.test(s))items.push({dish:"tuna_tartare",temp:null,qty:1});
 
-        // Determine action
-        let action = "fire";
-        if (t.includes("cancel"))                          action = "cancel";
-        else if (t.includes("86") || t.includes("sold out")) action = "86";
-        else if (/plated|ready|pickup/.test(t))            action = "plated";
-        else if (/status|how long/.test(t))                action = "status";
+    return{action:action,table:table,items:items,rush:/fly|asap|urgente|rush/.test(s),transcript:t};
+}
 
-        // Extract table number
-        const tableMatch = t.match(/table\s+(\d+)|mesa\s+(\d+)/);
-        const tableNumber = tableMatch ? parseInt(tableMatch[1] || tableMatch[2]) : null;
+function processCmd(transcript,speaker,lang){
+    var p=parseCmd(transcript);
+    voiceCommands++;
 
-        // Extract items
-        const items = [];
+    if(p.action==="fire"&&p.items.length>0&&p.table){
+        var oid="ORD-"+String(orderCounter++).padStart(4,'0');
+        var ca=CUSTOMER_ALLERGIES[p.table]||[];
+        var warns=[],oItems=[],maxCook=0,totalPrice=0;
+        var stations=new Set();
 
-        // Steaks with temps (check most specific first)
-        const steakTemps = [
-            [/steak.*medium[-\s]rare|bistec.*t[eé]rmino\s*medio/, "medium_rare"],
-            [/steak.*medium[-\s]well/, "medium_well"],
-            [/steak.*well[-\s]done/, "well_done"],
-            [/steak.*medium(?![-\s])/, "medium"],
-            [/steak.*rare/, "rare"],
+        for(var i=0;i<p.items.length;i++){
+            var it=p.items[i];
+            var dk=it.temp?("steak_"+it.temp):it.dish;
+            var dd=MENU[dk]||MENU[it.dish];
+            if(!dd)continue;
+
+            if(ca.length>0){
+                var conf=ca.filter(function(a){return dd.allergens.indexOf(a)!==-1;});
+                if(conf.length>0) warns.push({dish:dd.name,allergens:conf,severity:"critical",message:"ALLERGEN: "+dd.name+" contains "+conf.join(', ')+"! Table "+p.table+" has allergy."});
+            }
+
+            var ct=dd.cook; maxCook=Math.max(maxCook,ct); totalPrice+=dd.price*it.qty;
+            stations.add(dd.station);
+            oItems.push({dish_key:dk,dish_name:dd.name,quantity:it.qty,temp:it.temp,cook_time_minutes:ct,station:dd.station,course:dd.course,status:"cooking",started_at:new Date().toISOString()});
+
+            // Track dish stats
+            dishStats[dd.name]=(dishStats[dd.name]||0)+it.qty;
+
+            // Inventory
+            var invMap={steak:"ribeye",salmon:"salmon",pasta_carbonara:"pasta",chicken_marsala:"chicken",caesar_salad:"romaine",lobster_bisque:"lobster",filet_mignon:"ribeye",tuna_tartare:"tuna"};
+            var ik=invMap[it.dish];
+            if(ik&&inventory[ik]!==undefined)inventory[ik]=Math.max(0,inventory[ik]-it.qty);
+        }
+
+        // Sort by course: appetizer → main → dessert
+        var courseOrder={appetizer:0,main:1,dessert:2};
+        oItems.sort(function(a,b){return(courseOrder[a.course]||1)-(courseOrder[b.course]||1);});
+
+        var order={order_id:oid,table_number:p.table,items:oItems,status:"cooking",urgency:p.rush?"rush":"normal",stations:Array.from(stations),created_at:new Date().toISOString(),estimated_ready_at:new Date(Date.now()+maxCook*60000).toISOString(),allergen_warnings:warns,total_price:totalPrice,speaker:speaker,language:lang};
+
+        // Track hourly
+        var hr=new Date().getHours();
+        hourlyStats[hr]=(hourlyStats[hr]||0)+1;
+
+        // Staff attribution
+        var staffMember=STAFF.find(function(s){return s.id===speaker;});
+        if(staffMember)staffMember.ordersToday++;
+
+        return{success:true,order_id:oid,order:order,allergen_warnings:warns};
+    }
+
+    if(p.action==="plated"&&p.table){
+        var fid=null;
+        for(var id in orders){if(orders[id].table_number===p.table){fid=id;break;}}
+        if(fid){
+            var completed=orders[fid];
+            completed.status="completed";
+            completed.completed_at=new Date().toISOString();
+            var created=new Date(completed.created_at).getTime();
+            var dur=(Date.now()-created)/60000;
+            completed.actual_cook_time=Math.round(dur*10)/10;
+            avgCookTimes.push(dur);
+            completedLog.unshift(completed);
+            totalCompleted++;
+            delete orders[fid];
+            for(var k in timerIntervals){if(k.indexOf(fid)!==-1){clearInterval(timerIntervals[k]);delete timerIntervals[k];}}
+            playSound("complete");
+            return{success:true,message:{en:"Table "+p.table+" completed! ("+completed.actual_cook_time+"min)",es:"Mesa "+p.table+" completada!"}};
+        }
+        return{success:false,message:"No active order for table "+p.table};
+    }
+
+    if(p.action==="86"){
+        var items86=[];
+        for(var j=0;j<p.items.length;j++){
+            var i86=p.items[j];var ik86=i86.dish==="steak"?"ribeye":i86.dish;
+            if(inventory[ik86]!==undefined){inventory[ik86]=0;items86.push(ik86);}
+        }
+        renderInv();
+        return{success:true,message:{en:"86'd: "+items86.join(', ')}};
+    }
+
+    if(p.action==="status"){
+        var cnt=Object.keys(orders).length;
+        return{success:true,message:{en:cnt+" orders active"}};
+    }
+
+    return{success:false,message:"Try: 'fire table 5 two steaks medium-rare'"};
+}
+
+// =============================================
+// SEND COMMAND
+// =============================================
+async function sendCmd(){
+    var inp=document.getElementById('text-cmd');
+    var cmd=inp.value.trim(); if(!cmd)return;
+    var transcript=document.getElementById('transcript');
+    transcript.textContent='"'+cmd+'"'; transcript.classList.add('active');
+    addMsg('chef',currentLang,cmd);
+
+    var result;
+    if(backendConnected&&API_URL){
+        try{
+            var r=await fetch(API_URL+'/api/voice/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:cmd,speaker_role:'chef',language:currentLang})});
+            result=await r.json();
+        }catch(e){result=processCmd(cmd,'chef',currentLang);}
+    }else{result=processCmd(cmd,'chef',currentLang);}
+
+    handleResult(result);
+    inp.value='';
+    setTimeout(function(){transcript.classList.remove('active');},3000);
+}
+
+function handleResult(r){
+    if(r.success){
+        if(r.order){addOrder(r.order);showToast('Order '+r.order_id+' — Table '+r.order.table_number);playSound("neworder");}
+        else if(r.message){var m=(typeof r.message==='object')?(r.message[currentLang]||r.message.en):r.message;showToast(m);}
+        if(r.allergen_warnings&&r.allergen_warnings.length>0){for(var w=0;w<r.allergen_warnings.length;w++){showAllergenAlert(r.allergen_warnings[w]);}playSound("allergen");}
+        updateAll();
+    }else{showToast(r.error||r.message||'Command not recognized','error');}
+}
+
+// =============================================
+// UI: Messages
+// =============================================
+function addMsg(speaker,lang,text,trans){
+    var f=document.getElementById('conv-feed');
+    if(f.querySelector('div[style*="text-align"]'))f.innerHTML='';
+    var d=document.createElement('div'); d.className='conv-msg '+speaker;
+    d.innerHTML='<div class="msg-hdr"><span class="speaker">'+esc(speaker.toUpperCase().replace(/_/g,' '))+'</span><span>'+new Date().toLocaleTimeString()+'</span></div><div class="msg-text">'+esc(text)+'</div>'+(trans?'<div class="msg-trans">🌍 '+esc(trans)+'</div>':'');
+    f.appendChild(d); f.scrollTop=f.scrollHeight;
+    msgCount++; document.getElementById('msg-count').textContent=msgCount;
+}
+
+// =============================================
+// UI: Orders
+// =============================================
+function addOrder(order){
+    var c=document.getElementById('orders-container');
+    if(c.querySelector('div[style*="text-align"]'))c.innerHTML='';
+
+    var d=document.createElement('div');
+    d.className='order-card'+(order.urgency==='rush'?' rush':'');
+    d.id='order-'+order.order_id;
+    d.dataset.stations=order.stations?order.stations.join(','):'';
+
+    var itemsH='';
+    for(var i=0;i<order.items.length;i++){
+        var it=order.items[i];
+        itemsH+='<div class="item-row"><div class="item-info"><div class="item-name">'+it.quantity+'x '+esc(it.dish_name)+'</div><div class="item-detail">'+(it.temp?it.temp.replace(/_/g,' ')+' · ':'')+it.station+' · '+it.course+'</div></div><div class="item-timer" id="timer-'+order.order_id+'-'+i+'">'+it.cook_time_minutes+':00</div></div>';
+    }
+
+    var tags='';
+    if(order.stations){order.stations.forEach(function(s){tags+='<span class="order-tag tag-station">'+s+'</span>';});}
+    var courses=[...new Set(order.items.map(function(x){return x.course;}))];
+    courses.forEach(function(c){tags+='<span class="order-tag tag-course">'+c+'</span>';});
+    if(order.urgency==='rush')tags+='<span class="order-tag" style="background:rgba(239,68,68,0.2);color:var(--red);border:1px solid var(--red);">RUSH</span>';
+    tags+='<span class="order-tag tag-time">$'+order.total_price.toFixed(0)+'</span>';
+
+    d.innerHTML='<div class="order-hdr"><div class="order-table">T'+order.table_number+'</div><div class="order-id">'+esc(order.order_id)+'</div></div><div class="order-meta">'+tags+'</div><div class="order-items">'+itemsH+'</div><div class="order-actions"><button class="order-action-btn complete" onclick="completeOrder(\''+order.order_id+'\')">✓ Complete</button><button class="order-action-btn" onclick="bumpOrder(\''+order.order_id+'\')">⟫ Bump</button></div>';
+
+    c.insertBefore(d,c.firstChild);
+    orders[order.order_id]=order;
+    startTimers(order);
+    applyStationFilter();
+    updateAll();
+}
+
+function startTimers(order){
+    for(var i=0;i<order.items.length;i++){
+        (function(idx,item){
+            var tid='timer-'+order.order_id+'-'+idx;
+            var el=document.getElementById(tid); if(!el)return;
+            var secs=item.cook_time_minutes*60;
+            var iv=setInterval(function(){
+                secs--;
+                if(secs<=0){
+                    clearInterval(iv); el.textContent='READY'; el.classList.add('done');
+                    var allDone=true;
+                    for(var j=0;j<order.items.length;j++){var te=document.getElementById('timer-'+order.order_id+'-'+j);if(te&&!te.classList.contains('done'))allDone=false;}
+                    if(allDone){var card=document.getElementById('order-'+order.order_id);if(card)card.classList.add('ready');showToast('Table '+order.table_number+' — ALL ITEMS READY!');playSound("ready");}
+                }else{
+                    var m=Math.floor(secs/60),s=secs%60;
+                    el.textContent=m+':'+(s<10?'0':'')+s;
+                    if(secs<=60)el.classList.add('critical');
+                    else if(secs<=120)el.classList.add('warning');
+                }
+            },1000);
+            timerIntervals[tid]=iv;
+        })(i,order.items[i]);
+    }
+}
+
+function completeOrder(oid){
+    var order=orders[oid]; if(!order)return;
+    order.status="completed"; order.completed_at=new Date().toISOString();
+    var dur=(Date.now()-new Date(order.created_at).getTime())/60000;
+    order.actual_cook_time=Math.round(dur*10)/10;
+    avgCookTimes.push(dur); completedLog.unshift(order); totalCompleted++;
+    delete orders[oid];
+    for(var k in timerIntervals){if(k.indexOf(oid)!==-1){clearInterval(timerIntervals[k]);delete timerIntervals[k];}}
+    var el=document.getElementById('order-'+oid); if(el)el.remove();
+    if(Object.keys(orders).length===0)document.getElementById('orders-container').innerHTML='<div style="text-align:center;padding:4rem;color:var(--text-muted);"><div style="font-size:4rem;margin-bottom:1rem;opacity:0.3;">🍳</div><h3 style="color:var(--text-dim);">No Active Orders</h3></div>';
+    playSound("complete"); showToast('Table '+order.table_number+' completed ('+order.actual_cook_time+'min)');
+    updateAll();
+}
+
+function bumpOrder(oid){
+    var el=document.getElementById('order-'+oid);
+    if(el){var p=el.parentNode;p.appendChild(el);} // move to bottom
+}
+
+function showAllergenAlert(w){
+    var c=document.getElementById('orders-container');
+    var d=document.createElement('div'); d.className='allergen-alert';
+    d.innerHTML='<h4>🚨 ALLERGEN ALERT</h4><p><strong>'+esc(w.dish)+'</strong> — '+esc(w.allergens.join(', '))+'</p><p style="font-size:0.8rem;margin-top:0.3rem;">'+esc(w.message||'')+'</p>';
+    c.insertBefore(d,c.firstChild);
+    requestNotification('ALLERGEN: '+w.dish+' — '+w.allergens.join(', '));
+    setTimeout(function(){if(d.parentNode)d.remove();},12000);
+}
+
+// =============================================
+// STATION FILTER
+// =============================================
+function filterStation(s,btn){
+    currentStation=s;
+    document.querySelectorAll('.station-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    applyStationFilter();
+}
+function applyStationFilter(){
+    document.querySelectorAll('.order-card').forEach(function(c){
+        if(currentStation==='all')c.style.display='';
+        else c.style.display=(c.dataset.stations&&c.dataset.stations.indexOf(currentStation)!==-1)?'':'none';
+    });
+}
+
+// =============================================
+// UI: Inventory, Stats, Staff sidebar
+// =============================================
+function renderInv(){
+    var l=document.getElementById('inv-list');
+    var icons={ribeye:'🥩',salmon:'🐟',pasta:'🍝',chicken:'🍗',romaine:'🥬',lobster:'🦞',cream:'🥛',flour:'🌾',eggs:'🥚',tuna:'🐟'};
+    l.innerHTML='';
+    for(var it in inventory){
+        var q=inventory[it],st=q>10?'ok':q>0?'low':'out';
+        var d=document.createElement('div');d.className='inv-item '+st;
+        d.innerHTML='<span>'+(icons[it]||'📦')+' '+it.charAt(0).toUpperCase()+it.slice(1)+'</span><span class="inv-badge '+st+'">'+q+'</span>';
+        l.appendChild(d);
+    }
+}
+
+function renderStaffSidebar(){
+    var c=document.getElementById('staff-sidebar'); c.innerHTML='';
+    STAFF.forEach(function(s){
+        if(!s.clocked)return;
+        var d=document.createElement('div');d.className='staff-item';
+        d.innerHTML='<span><span class="staff-dot on"></span>'+s.avatar+' '+s.name+'</span><span style="font-size:0.7rem;color:var(--text-muted);">'+s.lang.toUpperCase()+'</span>';
+        c.appendChild(d);
+    });
+}
+
+function updateAll(){
+    var ac=Object.keys(orders).length;
+    document.getElementById('stat-active').textContent=ac;
+    document.getElementById('stat-completed').textContent=totalCompleted;
+    var avg=avgCookTimes.length>0?(avgCookTimes.reduce(function(a,b){return a+b;},0)/avgCookTimes.length):0;
+    document.getElementById('stat-avg-cook').innerHTML=Math.round(avg*10)/10+'<span style="font-size:0.8rem;color:var(--text-muted);">min</span>';
+    document.getElementById('stat-time-saved').innerHTML=Math.round((totalCompleted+ac)*19.5)+'<span style="font-size:0.8rem;color:var(--text-muted);">min</span>';
+    document.getElementById('kds-badge').textContent=ac;
+    renderInv();
+    updateAnalytics();
+    updateOrderLog();
+}
+
+// =============================================
+// UI: Analytics
+// =============================================
+function updateAnalytics(){
+    document.getElementById('an-total').textContent=totalCompleted+Object.keys(orders).length;
+    document.getElementById('an-completed').textContent=totalCompleted;
+    var avg=avgCookTimes.length>0?(avgCookTimes.reduce(function(a,b){return a+b;},0)/avgCookTimes.length):0;
+    document.getElementById('an-avg').textContent=Math.round(avg)+'m';
+    document.getElementById('an-voice').textContent=voiceCommands;
+
+    // Hourly chart
+    var hc=document.getElementById('hourly-chart'); hc.innerHTML='';
+    var maxH=1;for(var h in hourlyStats)maxH=Math.max(maxH,hourlyStats[h]);
+    for(var hr=11;hr<=22;hr++){
+        var val=hourlyStats[hr]||0;
+        var col=document.createElement('div');col.className='bar-col';
+        col.innerHTML='<div class="bar-value">'+val+'</div><div class="bar" style="height:'+Math.max(4,(val/maxH)*130)+'px;background:linear-gradient(to top,var(--accent),var(--accent-light));"></div><div class="bar-label">'+(hr>12?hr-12:hr)+(hr>=12?'p':'a')+'</div>';
+        hc.appendChild(col);
+    }
+
+    // Dish chart
+    var dc=document.getElementById('dish-chart'); dc.innerHTML='';
+    var sortedDishes=Object.entries(dishStats).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+    var maxD=sortedDishes.length>0?sortedDishes[0][1]:1;
+    sortedDishes.forEach(function(d){
+        var row=document.createElement('div');row.className='perf-row';
+        row.innerHTML='<span class="perf-label" style="min-width:120px;">'+d[0]+'</span><div class="perf-bar-wrap"><div class="perf-bar" style="width:'+((d[1]/maxD)*100)+'%;background:var(--accent);"></div></div><span class="perf-val" style="color:var(--accent);">'+d[1]+'</span>';
+        dc.appendChild(row);
+    });
+
+    // Performance metrics
+    var pm=document.getElementById('perf-metrics'); pm.innerHTML='';
+    var metrics=[
+        {label:"Voice Accuracy",val:98.5,color:"var(--green)"},
+        {label:"Order Throughput",val:Math.min(100,totalCompleted*8),color:"var(--accent)"},
+        {label:"Kitchen Efficiency",val:avg>0?Math.min(100,Math.round(100-(avg-10)*5)):95,color:"var(--blue)"},
+        {label:"Staff Utilization",val:Math.min(100,voiceCommands*12),color:"var(--purple)"},
+    ];
+    metrics.forEach(function(m){
+        var row=document.createElement('div');row.className='perf-row';
+        row.innerHTML='<span class="perf-label">'+m.label+'</span><div class="perf-bar-wrap"><div class="perf-bar" style="width:'+m.val+'%;background:'+m.color+';"></div></div><span class="perf-val" style="color:'+m.color+';">'+Math.round(m.val)+'%</span>';
+        pm.appendChild(row);
+    });
+
+    // Timeline
+    var tl=document.getElementById('timeline'); tl.innerHTML='';
+    completedLog.slice(0,8).forEach(function(o){
+        var item=document.createElement('div');item.className='tl-item completed';
+        item.innerHTML='<div class="tl-time">'+new Date(o.completed_at||o.created_at).toLocaleTimeString()+'</div><div class="tl-text">Table '+o.table_number+' — '+o.items.map(function(x){return x.dish_name;}).join(', ')+(o.actual_cook_time?' ('+o.actual_cook_time+'min)':'')+'</div>';
+        tl.appendChild(item);
+    });
+    if(tl.innerHTML==='')tl.innerHTML='<div style="color:var(--text-muted);font-size:0.85rem;">No completed orders yet</div>';
+}
+
+// =============================================
+// UI: Staff View
+// =============================================
+function renderStaffView(){
+    var g=document.getElementById('staff-grid');g.innerHTML='';
+    STAFF.forEach(function(s){
+        var d=document.createElement('div');d.className='staff-card';
+        d.innerHTML='<div class="avatar">'+s.avatar+'</div><h3>'+s.name+'</h3><div class="role">'+s.role+'</div><div class="staff-stats"><div class="staff-stat"><div class="val">'+s.ordersToday+'</div><div class="lbl">Orders</div></div><div class="staff-stat"><div class="val">'+s.lang.toUpperCase()+'</div><div class="lbl">Language</div></div><div class="staff-stat"><div class="val">'+(s.clocked?'<span style="color:var(--green);">ON</span>':'<span style="color:var(--text-muted);">OFF</span>')+'</div><div class="lbl">Status</div></div><div class="staff-stat"><div class="val">'+(s.station||'FOH')+'</div><div class="lbl">Station</div></div></div>';
+        g.appendChild(d);
+    });
+}
+
+// =============================================
+// UI: Order Log
+// =============================================
+function updateOrderLog(){
+    var c=document.getElementById('order-log');
+    document.getElementById('log-count').textContent=completedLog.length;
+    if(completedLog.length===0){c.innerHTML='<div style="text-align:center;padding:3rem;color:var(--text-muted);">No completed orders yet</div>';return;}
+    c.innerHTML='';
+    completedLog.forEach(function(o){
+        var d=document.createElement('div');d.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg-card);border-radius:0.5rem;margin-bottom:0.4rem;border-left:4px solid var(--green);';
+        d.innerHTML='<div><strong>'+esc(o.order_id)+'</strong> · Table '+o.table_number+'<div style="font-size:0.8rem;color:var(--text-muted);">'+o.items.map(function(x){return x.quantity+'x '+x.dish_name;}).join(', ')+'</div></div><div style="text-align:right;"><div style="font-size:0.85rem;font-weight:700;color:var(--green);">'+((o.actual_cook_time||0))+'min</div><div style="font-size:0.7rem;color:var(--text-muted);">$'+((o.total_price||0).toFixed(0))+'</div></div>';
+        c.appendChild(d);
+    });
+}
+
+// =============================================
+// TAB NAVIGATION
+// =============================================
+function switchView(view,btn){
+    document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('view-'+view).classList.add('active');
+    btn.classList.add('active');
+    if(view==='staff')renderStaffView();
+    if(view==='analytics')updateAnalytics();
+    if(view==='log')updateOrderLog();
+}
+
+// =============================================
+// SOUND & NOTIFICATIONS
+// =============================================
+var audioCtx=null;
+function playSound(type){
+    try{
+        if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+        var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.connect(g);g.connect(audioCtx.destination);
+        if(type==="neworder"){o.frequency.value=880;g.gain.value=0.1;o.start();o.stop(audioCtx.currentTime+0.15);}
+        else if(type==="ready"){o.frequency.value=1047;g.gain.value=0.15;o.start();setTimeout(function(){o.frequency.value=1319;},150);o.stop(audioCtx.currentTime+0.3);}
+        else if(type==="complete"){o.frequency.value=523;g.gain.value=0.1;o.start();o.stop(audioCtx.currentTime+0.2);}
+        else if(type==="allergen"){o.type='square';o.frequency.value=440;g.gain.value=0.2;o.start();setTimeout(function(){o.frequency.value=220;},200);o.stop(audioCtx.currentTime+0.6);}
+    }catch(e){}
+}
+
+function speak(text){
+    if(!window.speechSynthesis)return;
+    var u=new SpeechSynthesisUtterance(text);
+    u.rate=1.1;u.pitch=1;u.volume=0.7;
+    var langMap={en:'en-US',es:'es-ES',zh:'zh-CN',fr:'fr-FR',vi:'vi-VN'};
+    u.lang=langMap[currentLang]||'en-US';
+    window.speechSynthesis.speak(u);
+}
+
+function requestNotification(msg){
+    if("Notification" in window&&Notification.permission==="granted"){new Notification("ChefMate Voice",{body:msg,icon:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍🍳</text></svg>"});}
+    else if("Notification" in window&&Notification.permission!=="denied"){Notification.requestPermission();}
+}
+
+// =============================================
+// DEMOS
+// =============================================
+async function runDemo(scenario){
+    if(scenario==='reset'){
+        orders={};orderCounter=1;totalCompleted=0;voiceCommands=0;msgCount=0;completedLog=[];dishStats={};hourlyStats={};avgCookTimes=[];
+        inventory={ribeye:50,salmon:20,pasta:100,chicken:35,romaine:30,lobster:15,cream:60,flour:80,eggs:90,tuna:12};
+        STAFF.forEach(function(s){s.ordersToday=0;});
+        for(var k in timerIntervals){clearInterval(timerIntervals[k]);}timerIntervals={};
+        document.getElementById('orders-container').innerHTML='<div style="text-align:center;padding:4rem;color:var(--text-muted);"><div style="font-size:4rem;margin-bottom:1rem;opacity:0.3;">🍳</div><h3 style="color:var(--text-dim);">No Active Orders</h3></div>';
+        document.getElementById('conv-feed').innerHTML='<div style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem;">Conversation cleared</div>';
+        document.getElementById('msg-count').textContent='0';
+        updateAll();showToast('Kitchen reset');return;
+    }
+
+    if(scenario==='dinner-rush'){
+        var rush=[
+            {sp:"chef",lang:"en",msg:"Fire table 5, two steaks medium-rare, one salmon"},
+            {sp:"line_cook_1",lang:"es",msg:"Order fire table 12, pasta carbonara and garlic bread"},
+            {sp:"chef",lang:"en",msg:"Fire table 3, filet mignon and caesar salad"},
+            {sp:"line_cook_2",lang:"zh",msg:"Order fire table 8, risotto and lobster bisque"},
+            {sp:"sous_chef",lang:"es",msg:"Rush order fire table 7, chicken marsala"},
+            {sp:"chef",lang:"en",msg:"On the fly fire table 15, steak medium and tuna tartare"},
         ];
-        for (const [pattern, temp] of steakTemps) {
-            if (pattern.test(t)) {
-                const qtyMatch = t.match(/(one|two|three|four|five|dos|tres|\d)\s*steak/);
-                let qty = 1;
-                if (qtyMatch) {
-                    const map = { one:1, two:2, three:3, four:4, five:5, dos:2, tres:3 };
-                    qty = map[qtyMatch[1]] || parseInt(qtyMatch[1]) || 1;
-                }
-                items.push({ dish: "steak", temp, quantity: qty });
-                break;
-            }
-        }
-
-        // Other menu items
-        if (/salmon|salm[oó]n/.test(t))         items.push({ dish: "salmon",          temp: null, quantity: 1 });
-        if (/pasta|carbonara/.test(t))           items.push({ dish: "pasta_carbonara", temp: null, quantity: 1 });
-        if (/salad|ensalada|caesar/.test(t))     items.push({ dish: "caesar_salad",    temp: null, quantity: 1 });
-        if (/chicken|pollo|marsala/.test(t))     items.push({ dish: "chicken_marsala", temp: null, quantity: 1 });
-        if (/garlic\s*bread/.test(t))            items.push({ dish: "garlic_bread",    temp: null, quantity: 1 });
-
-        return {
-            action,
-            table_number: tableNumber,
-            items,
-            urgency: /fly|asap|urgente/.test(t) ? "rush" : "normal",
-            original_transcript: transcript
-        };
+        rush.forEach(function(d,i){setTimeout(function(){addMsg(d.sp,d.lang,d.msg);var r=processCmd(d.msg,d.sp,d.lang);if(r.success&&r.order){addOrder(r.order);}if(r.allergen_warnings&&r.allergen_warnings.length>0)r.allergen_warnings.forEach(showAllergenAlert);},i*600);});
+        showToast('Dinner rush — 6 orders firing!');speak('Dinner rush, six orders firing!');return;
     }
 
-    function processCommandLocally(transcript, speakerRole, language) {
-        const parsed = parseCommand(transcript);
-        const tableNumber = parsed.table_number;
-
-        // --- FIRE ORDER ---
-        if (parsed.action === "fire" && parsed.items.length > 0 && tableNumber) {
-            const orderId = "ORD-" + String(orderCounter++).padStart(4, '0');
-            const customerAllergies = CUSTOMER_ALLERGIES[tableNumber] || [];
-            const allergenWarnings = [];
-            const orderItems = [];
-            let maxCookTime = 0;
-
-            for (const item of parsed.items) {
-                const dishKey = item.temp ? ("steak_" + item.temp) : item.dish;
-                const dishData = MENU[dishKey] || MENU[item.dish];
-                if (!dishData) continue;
-
-                // Check allergens
-                if (customerAllergies.length > 0) {
-                    const conflicts = customerAllergies.filter(a => dishData.allergens.includes(a));
-                    if (conflicts.length > 0) {
-                        allergenWarnings.push({
-                            dish: dishData.name,
-                            allergens: conflicts,
-                            severity: "critical",
-                            message: "ALLERGEN ALERT: " + dishData.name + " contains " + conflicts.join(', ') + "! Table " + tableNumber + " has allergy."
-                        });
-                    }
-                }
-
-                const cookTime = dishData.cook_time;
-                maxCookTime = Math.max(maxCookTime, cookTime);
-                orderItems.push({
-                    dish_key: dishKey,
-                    dish_name: dishData.name,
-                    quantity: item.quantity,
-                    temp: item.temp,
-                    cook_time_minutes: cookTime,
-                    status: "cooking",
-                    started_at: new Date().toISOString(),
-                    ready_at: new Date(Date.now() + cookTime * 60000).toISOString()
-                });
-
-                // Deduct inventory
-                var invKey = null;
-                if (item.dish === "steak")               invKey = "ribeye";
-                else if (item.dish === "salmon")         invKey = "salmon";
-                else if (item.dish === "pasta_carbonara") invKey = "pasta";
-                else if (item.dish === "chicken_marsala") invKey = "chicken";
-                else if (item.dish === "caesar_salad")   invKey = "romaine";
-                if (invKey && inventory[invKey] !== undefined) {
-                    inventory[invKey] = Math.max(0, inventory[invKey] - item.quantity);
-                }
-            }
-
-            const order = {
-                order_id: orderId,
-                table_number: tableNumber,
-                items: orderItems,
-                status: "cooking",
-                urgency: parsed.urgency,
-                created_at: new Date().toISOString(),
-                estimated_ready_at: new Date(Date.now() + maxCookTime * 60000).toISOString(),
-                allergen_warnings: allergenWarnings,
-                original_command: transcript,
-                speaker: speakerRole,
-                language: language
-            };
-
-            return { success: true, order_id: orderId, order: order, allergen_warnings: allergenWarnings };
-        }
-
-        // --- PLATED / PICKUP ---
-        if (parsed.action === "plated" && tableNumber) {
-            var foundId = null;
-            for (var id in orders) {
-                if (orders[id].table_number === tableNumber) { foundId = id; break; }
-            }
-            if (foundId) {
-                delete orders[foundId];
-                for (var k in timerIntervals) {
-                    if (k.indexOf(foundId) !== -1) { clearInterval(timerIntervals[k]); delete timerIntervals[k]; }
-                }
-                updateOrderCount();
-                var orderEl = document.getElementById("order-" + foundId);
-                if (orderEl) orderEl.remove();
-                if (Object.keys(orders).length === 0) {
-                    document.getElementById('orders').innerHTML =
-                        '<div style="text-align:center;padding:3rem;color:#64748b;">' +
-                        '<div style="font-size:4rem;margin-bottom:1rem;">🍳</div>' +
-                        '<h3>No Active Orders</h3></div>';
-                }
-                return { success: true, message: { en: "Table " + tableNumber + " completed!", es: "Mesa " + tableNumber + " completada!" } };
-            }
-            return { success: false, message: "No active order for table " + tableNumber };
-        }
-
-        // --- 86 (SOLD OUT) ---
-        if (parsed.action === "86") {
-            var items86 = [];
-            for (var i = 0; i < parsed.items.length; i++) {
-                var item86 = parsed.items[i];
-                var k86 = item86.dish === "steak" ? "ribeye" : item86.dish;
-                if (inventory[k86] !== undefined) { inventory[k86] = 0; items86.push(k86); }
-            }
-            renderInventory();
-            return { success: true, items_86d: items86, message: { en: "86'd: " + items86.join(', ') } };
-        }
-
-        // --- STATUS ---
-        if (parsed.action === "status") {
-            var count = Object.keys(orders).length;
-            return { success: true, message: { en: count + " orders active" } };
-        }
-
-        return { success: false, message: "Could not parse command. Try: 'Order fire table 5, two steaks medium-rare'" };
+    if(scenario==='multilingual'){
+        var msgs=[
+            {sp:"chef",lang:"en",msg:"Fire table 5, two steaks medium-rare",tr:"Fuego mesa 5, dos bistecs término medio"},
+            {sp:"line_cook_1",lang:"es",msg:"¿Cuánto tiempo para mesa 5?",tr:"How long for table 5?"},
+            {sp:"chef",lang:"en",msg:"Twelve minutes for the steaks",tr:"Doce minutos para los bistecs"},
+            {sp:"line_cook_2",lang:"zh",msg:"五号桌需要什么配菜?",tr:"What sides for table 5?"},
+            {sp:"chef",lang:"en",msg:"Caesar salad starter, then steaks",tr:"Ensalada César de entrada, luego bistecs"},
+            {sp:"line_cook_1",lang:"es",msg:"Entendido, comenzando la ensalada",tr:"Understood, starting the salad"},
+            {sp:"pastry",lang:"fr",msg:"Tiramisu prêt pour table 3",tr:"Tiramisu ready for table 3"},
+        ];
+        var r0=processCmd(msgs[0].msg,msgs[0].sp,msgs[0].lang);
+        if(r0.success&&r0.order)addOrder(r0.order);
+        msgs.forEach(function(m,i){setTimeout(function(){addMsg(m.sp,m.lang,m.msg,m.tr);},i*800);});
+        showToast('Multilingual — 4 languages!');return;
     }
 
-    // ============================================
-    // SPEECH RECOGNITION (Web Speech API)
-    // ============================================
-    function initSpeechRecognition() {
-        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) return null;
-        var rec = new SR();
-        rec.continuous = false;
-        rec.interimResults = false;
-        rec.maxAlternatives = 1;
-        rec.lang = 'en-US';
-
-        rec.onstart = function() {
-            document.getElementById('voice-status').textContent = 'Listening...';
-        };
-        rec.onresult = function(event) {
-            var transcript = event.results[0][0].transcript;
-            document.getElementById('text-command').value = transcript;
-            document.getElementById('transcript').textContent = '"' + transcript + '"';
-            document.getElementById('transcript').classList.add('active');
-            setTimeout(sendTextCommand, 500);
-        };
-        rec.onerror = function() {
-            showToast('Voice error. Try typing instead.', true);
-            stopVoice();
-        };
-        rec.onend = function() { stopVoice(); };
-        return rec;
+    if(scenario==='allergen'){
+        addMsg('chef','en','Fire table 12, pasta carbonara and lobster bisque');
+        var r=processCmd('Fire table 12, pasta carbonara and lobster bisque','chef','en');
+        if(r.success&&r.order)addOrder(r.order);
+        if(r.allergen_warnings)r.allergen_warnings.forEach(showAllergenAlert);
+        showToast('ALLERGEN ALERT — Table 12!','error');speak('Allergen alert! Table 12 has dairy and gluten allergy!');return;
     }
 
-    function setLanguage(lang, btn) {
-        currentLanguage = lang;
-        document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        if (recognition) {
-            var langMap = { en: 'en-US', es: 'es-US', zh: 'zh-CN', fr: 'fr-FR', vi: 'vi-VN' };
-            recognition.lang = langMap[lang] || 'en-US';
-        }
-        showToast('Language set to ' + lang.toUpperCase());
+    if(scenario==='course-seq'){
+        addMsg('chef','en','Fire table 20, caesar salad, garlic bread, filet mignon, risotto, tiramisu, creme brulee');
+        var r=processCmd('Fire table 20, caesar salad, garlic bread, filet mignon, risotto, tiramisu, creme brulee','chef','en');
+        if(r.success&&r.order)addOrder(r.order);
+        showToast('Course sequence — Apps → Mains → Desserts');speak('Course sequence fired for table 20. Appetizers, then mains, then desserts.');return;
     }
 
-    function toggleVoice() {
-        if (!recognition) {
-            recognition = initSpeechRecognition();
-            if (!recognition) {
-                showToast('Voice not supported in this browser. Use text input.', true);
-                return;
-            }
-        }
-        var btn = document.getElementById('voice-btn');
-        if (btn.classList.contains('listening')) {
-            stopVoice();
-        } else {
-            try {
-                recognition.start();
-                btn.classList.add('listening');
-                btn.innerHTML = '🔴<span class="voice-status">Listening...</span>';
-            } catch(e) {
-                showToast('Click again to start recording', true);
-            }
-        }
+    if(scenario==='shift-change'){
+        STAFF.forEach(function(s){
+            if(s.shift==='PM'){s.clocked=true;}
+            if(s.shift==='AM'&&s.id!=='chef'){s.clocked=false;}
+        });
+        renderStaffSidebar();
+        addMsg('chef','en','PM shift starting — Anh and Rosa clocking in');
+        addMsg('server_2','es','Estoy aquí, lista para el turno de noche');
+        showToast('Shift change — PM crew arriving');speak('Shift change. PM crew clocking in.');return;
     }
+}
 
-    function stopVoice() {
-        var btn = document.getElementById('voice-btn');
-        btn.classList.remove('listening');
-        btn.innerHTML = '🎙️<span class="voice-status" id="voice-status">Click to speak</span>';
+// =============================================
+// UTILITY
+// =============================================
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function showToast(msg,type){
+    var t=document.getElementById('toast');t.textContent=msg;
+    t.classList.remove('error','warning');if(type)t.classList.add(type);
+    t.classList.add('show');setTimeout(function(){t.classList.remove('show');},4000);
+}
+
+// =============================================
+// INIT
+// =============================================
+window.onload=async function(){
+    recognition=initSpeech();
+    if(!recognition)document.getElementById('voice-label').textContent='TEXT';
+    renderInv();renderStaffSidebar();updateAll();
+
+    // Request notification permission
+    if("Notification" in window&&Notification.permission==="default")Notification.requestPermission();
+
+    // Try backend
+    if(API_URL){
+        try{var r=await fetch(API_URL+'/api/health');var h=await r.json();if(h.status==='healthy'){backendConnected=true;showToast('Connected to backend!');return;}}catch(e){}
     }
-
-    // ============================================
-    // SEND COMMAND
-    // ============================================
-    async function sendTextCommand() {
-        var input = document.getElementById('text-command');
-        var command = input.value.trim();
-        if (!command) return;
-
-        var transcript = document.getElementById('transcript');
-        transcript.textContent = '"' + command + '"';
-        transcript.classList.add('active');
-        addMessage('chef', currentLanguage, command);
-
-        var result;
-
-        // Try backend first if connected
-        if (backendConnected && API_URL) {
-            try {
-                var response = await fetch(API_URL + '/api/voice/command', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ transcript: command, speaker_role: 'chef', language: currentLanguage })
-                });
-                result = await response.json();
-            } catch(e) {
-                result = processCommandLocally(command, 'chef', currentLanguage);
-            }
-        } else {
-            result = processCommandLocally(command, 'chef', currentLanguage);
-        }
-
-        handleResult(result);
-        input.value = '';
-        setTimeout(function() { transcript.classList.remove('active'); }, 3000);
-    }
-
-    function handleResult(result) {
-        if (result.success) {
-            if (result.order) {
-                addOrder(result.order);
-                showToast('Order created: Table ' + result.order.table_number);
-                totalOrdersToday++;
-            } else if (result.message) {
-                var msg = (typeof result.message === 'object')
-                    ? (result.message[currentLanguage] || result.message.en)
-                    : result.message;
-                showToast(msg);
-            }
-            if (result.allergen_warnings && result.allergen_warnings.length > 0) {
-                for (var w = 0; w < result.allergen_warnings.length; w++) {
-                    showAllergenAlert(result.allergen_warnings[w]);
-                }
-            }
-            updateStats();
-            renderInventory();
-        } else {
-            showToast(result.error || result.message || 'Command not recognized', true);
-        }
-    }
-
-    // ============================================
-    // UI RENDERING
-    // ============================================
-    function addMessage(speaker, lang, text, translation) {
-        var feed = document.getElementById('conversation');
-        if (feed.querySelector('div[style*="text-align: center"]')) feed.innerHTML = '';
-        var d = document.createElement('div');
-        d.className = 'message ' + speaker;
-        d.innerHTML =
-            '<div class="message-header">' +
-                '<span style="font-weight:700;">' + escapeHtml(speaker.toUpperCase()) + ' (' + escapeHtml(lang.toUpperCase()) + ')</span>' +
-                '<span>' + new Date().toLocaleTimeString() + '</span>' +
-            '</div>' +
-            '<div class="message-text">' + escapeHtml(text) + '</div>' +
-            (translation ? '<div class="translation">🌍 ' + escapeHtml(translation) + '</div>' : '');
-        feed.appendChild(d);
-        feed.scrollTop = feed.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-        var d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
-    }
-
-    function addOrder(order) {
-        var container = document.getElementById('orders');
-        if (container.querySelector('div[style*="text-align: center"]')) container.innerHTML = '';
-
-        var div = document.createElement('div');
-        div.className = 'order-card';
-        div.id = 'order-' + order.order_id;
-
-        var itemsHtml = '';
-        for (var i = 0; i < order.items.length; i++) {
-            var item = order.items[i];
-            itemsHtml +=
-                '<div class="item-row">' +
-                    '<div>' +
-                        '<div class="item-name">' + item.quantity + 'x ' + escapeHtml(item.dish_name) + '</div>' +
-                        (item.temp ? '<div class="item-temp">' + item.temp.replace(/_/g, ' ') + '</div>' : '') +
-                    '</div>' +
-                    '<div class="timer" id="timer-' + order.order_id + '-' + item.dish_key + '">' + item.cook_time_minutes + ':00</div>' +
-                '</div>';
-        }
-
-        div.innerHTML =
-            '<div class="order-header">' +
-                '<div class="table-number">Table ' + order.table_number + '</div>' +
-                '<div class="order-id">' + escapeHtml(order.order_id) + '</div>' +
-            '</div>' +
-            '<div class="order-items">' + itemsHtml + '</div>';
-
-        container.insertBefore(div, container.firstChild);
-        orders[order.order_id] = order;
-        startOrderTimers(order);
-        updateOrderCount();
-    }
-
-    function startOrderTimers(order) {
-        for (var i = 0; i < order.items.length; i++) {
-            (function(item) {
-                var timerId = 'timer-' + order.order_id + '-' + item.dish_key;
-                var el = document.getElementById(timerId);
-                if (!el) return;
-                var secs = item.cook_time_minutes * 60;
-                var iv = setInterval(function() {
-                    secs--;
-                    if (secs <= 0) {
-                        clearInterval(iv);
-                        el.textContent = 'READY';
-                        el.classList.add('ready');
-                        var card = document.getElementById('order-' + order.order_id);
-                        if (card) card.classList.add('ready');
-                        showToast('Table ' + order.table_number + ' - ' + item.dish_name + ' READY!');
-                    } else {
-                        var m = Math.floor(secs / 60);
-                        var s = secs % 60;
-                        el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-                        if (secs <= 120) el.classList.add('warning');
-                    }
-                }, 1000);
-                timerIntervals[timerId] = iv;
-            })(order.items[i]);
-        }
-    }
-
-    function showAllergenAlert(warning) {
-        var container = document.getElementById('orders');
-        var d = document.createElement('div');
-        d.className = 'allergen-alert';
-        d.innerHTML =
-            '<h3>🚨 ALLERGEN ALERT</h3>' +
-            '<p style="font-size:1.25rem;margin-bottom:0.5rem;">' +
-                '<strong>' + escapeHtml(warning.dish) + '</strong> contains ' + escapeHtml(warning.allergens.join(', ')) +
-            '</p>' +
-            '<p style="font-size:1rem;opacity:0.9;">' + escapeHtml(warning.message || '') + '</p>';
-        container.insertBefore(d, container.firstChild);
-        setTimeout(function() { if (d.parentNode) d.remove(); }, 10000);
-    }
-
-    function updateOrderCount() {
-        document.getElementById('active-count').textContent = Object.keys(orders).length;
-    }
-
-    function updateStats() {
-        document.getElementById('total-orders').textContent = totalOrdersToday;
-        document.getElementById('time-saved').textContent = Math.round(totalOrdersToday * 19.5);
-    }
-
-    function renderInventory() {
-        var list = document.getElementById('inventory-list');
-        var icons = { ribeye: '🥩', salmon: '🐟', pasta: '🍝', chicken: '🍗', romaine: '🥬' };
-        list.innerHTML = '';
-        for (var item in inventory) {
-            var qty = inventory[item];
-            var status = qty > 10 ? 'ok' : qty > 0 ? 'low' : 'out';
-            var d = document.createElement('div');
-            d.className = 'inventory-item ' + status;
-            d.innerHTML =
-                '<span>' + (icons[item] || '📦') + ' ' + item.charAt(0).toUpperCase() + item.slice(1) + '</span>' +
-                '<span class="stock-badge ' + status + '">' + qty + ' left</span>';
-            list.appendChild(d);
-        }
-    }
-
-    function showToast(message, isError) {
-        var t = document.getElementById('toast');
-        t.textContent = message;
-        t.classList.remove('error');
-        if (isError) t.classList.add('error');
-        t.classList.add('show');
-        setTimeout(function() { t.classList.remove('show'); }, 4000);
-    }
-
-    // ============================================
-    // DEMO SCENARIOS (all run client-side)
-    // ============================================
-    async function runDemo(scenario) {
-        if (scenario === 'reset') {
-            orders = {};
-            orderCounter = 1;
-            totalOrdersToday = 0;
-            inventory = { ribeye: 50, salmon: 20, pasta: 100, chicken: 35, romaine: 30 };
-            for (var k in timerIntervals) { clearInterval(timerIntervals[k]); }
-            timerIntervals = {};
-            document.getElementById('orders').innerHTML =
-                '<div style="text-align:center;padding:3rem;color:#64748b;">' +
-                '<div style="font-size:4rem;margin-bottom:1rem;">🍳</div>' +
-                '<h3>No Active Orders</h3>' +
-                '<p style="margin-top:0.5rem;">Kitchen reset - ready for service</p></div>';
-            document.getElementById('conversation').innerHTML =
-                '<div style="text-align:center;color:#64748b;padding:2rem;">Conversation cleared</div>';
-            updateOrderCount();
-            updateStats();
-            renderInventory();
-            showToast('Kitchen reset to clean state');
-            return;
-        }
-
-        // --- DINNER RUSH ---
-        if (scenario === 'dinner-rush') {
-            var rushOrders = [
-                { speaker: "chef",       lang: "en", msg: "Order fire table 5, two steaks medium-rare" },
-                { speaker: "line_cook_1",lang: "es", msg: "Order fire table 12, pasta carbonara" },
-                { speaker: "chef",       lang: "en", msg: "Order fire table 3, steak well-done" },
-                { speaker: "server_2",   lang: "en", msg: "Order fire table 7, chicken marsala" },
-                { speaker: "chef",       lang: "en", msg: "On the fly order fire table 15, steak medium" }
-            ];
-            for (var i = 0; i < rushOrders.length; i++) {
-                (function(idx) {
-                    setTimeout(function() {
-                        var d = rushOrders[idx];
-                        addMessage(d.speaker, d.lang, d.msg);
-                        var result = processCommandLocally(d.msg, d.speaker, d.lang);
-                        if (result.success && result.order) {
-                            addOrder(result.order);
-                            totalOrdersToday++;
-                            updateStats();
-                            renderInventory();
-                        }
-                        if (result.allergen_warnings && result.allergen_warnings.length > 0) {
-                            for (var w = 0; w < result.allergen_warnings.length; w++) {
-                                showAllergenAlert(result.allergen_warnings[w]);
-                            }
-                        }
-                    }, idx * 700);
-                })(i);
-            }
-            showToast('Dinner rush! 5 orders firing...');
-            return;
-        }
-
-        // --- MULTILINGUAL ---
-        if (scenario === 'multilingual') {
-            var msgs = [
-                { speaker: "chef",       lang: "en", msg: "Order fire table 5, two steaks medium-rare", translation: "Orden fuego mesa 5, dos bistecs termino medio" },
-                { speaker: "line_cook_1",lang: "es", msg: "Cuanto tiempo para mesa 5?", translation: "How long for table 5?" },
-                { speaker: "chef",       lang: "en", msg: "Twelve minutes for steaks", translation: "Doce minutos para los bistecs" },
-                { speaker: "line_cook_1",lang: "es", msg: "Entendido, comenzando ahora", translation: "Understood, starting now" },
-                { speaker: "server_1",   lang: "en", msg: "Table 5 wants steak medium instead", translation: "Mesa 5 quiere bistec termino medio" },
-                { speaker: "chef",       lang: "en", msg: "Update table 5, change to medium", translation: "Actualizar mesa 5, cambiar a termino medio" },
-                { speaker: "line_cook_1",lang: "es", msg: "Listo, mesa 5 bistec termino medio", translation: "Ready, table 5 steak medium" }
-            ];
-            // Create order from first message
-            var result = processCommandLocally(msgs[0].msg, msgs[0].speaker, msgs[0].lang);
-            if (result.success && result.order) {
-                addOrder(result.order);
-                totalOrdersToday++;
-                updateStats();
-                renderInventory();
-            }
-            for (var j = 0; j < msgs.length; j++) {
-                (function(idx) {
-                    setTimeout(function() {
-                        addMessage(msgs[idx].speaker, msgs[idx].lang, msgs[idx].msg, msgs[idx].translation);
-                    }, idx * 900);
-                })(j);
-            }
-            showToast('Multilingual kitchen conversation!');
-            return;
-        }
-
-        // --- ALLERGEN ALERT ---
-        if (scenario === 'allergen') {
-            addMessage('chef', 'en', 'Order fire table 12, pasta carbonara');
-            var aResult = processCommandLocally('Order fire table 12, pasta carbonara', 'chef', 'en');
-            if (aResult.success && aResult.order) {
-                addOrder(aResult.order);
-                totalOrdersToday++;
-                updateStats();
-                renderInventory();
-            }
-            if (aResult.allergen_warnings && aResult.allergen_warnings.length > 0) {
-                for (var a = 0; a < aResult.allergen_warnings.length; a++) {
-                    showAllergenAlert(aResult.allergen_warnings[a]);
-                }
-            }
-            showToast('ALLERGEN ALERT - Table 12 has dairy/gluten allergy!', true);
-            return;
-        }
-    }
-
-    // ============================================
-    // INIT
-    // ============================================
-    window.onload = async function() {
-        recognition = initSpeechRecognition();
-        if (!recognition) {
-            document.getElementById('voice-status').textContent = 'Use text input';
-        }
-
-        renderInventory();
-        updateStats();
-
-        // Try connecting to backend (only on localhost)
-        if (API_URL) {
-            try {
-                var response = await fetch(API_URL + '/api/health');
-                var health = await response.json();
-                if (health.status === 'healthy') {
-                    backendConnected = true;
-                    showToast('Connected to ChefMate backend!');
-                    try {
-                        var inv = await fetch(API_URL + '/api/inventory');
-                        var invData = await inv.json();
-                        if (invData.inventory) {
-                            inventory = {};
-                            for (var k in invData.inventory) inventory[k] = invData.inventory[k].quantity;
-                            renderInventory();
-                        }
-                    } catch(e) {}
-                }
-            } catch(e) {
-                showToast('Standalone demo mode - try the demo buttons!');
-            }
-        } else {
-            showToast('ChefMate Voice ready! Use voice or demo buttons.');
-        }
-    };
-    </script>
+    showToast('ChefMate Enterprise — standalone demo mode');
+};
+</script>
 </body>
 </html>

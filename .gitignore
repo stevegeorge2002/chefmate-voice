@@ -17,6 +17,9 @@ __pycache__/
 venv/
 .venv/
 
+# VS Code MCP config (contains tokens)
+.vscode/mcp.json
+
 # OS
 .DS_Store
 Thumbs.db
