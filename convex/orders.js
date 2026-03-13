@@ -44,17 +44,3 @@ export const completeOrder = mutation({
     }
   }
 });
-```
-
-**Save (Ctrl+S) and close.**
-
----
-
-## 📊 Check Convex Terminal
-
-**Look at your Convex terminal (the one that's still running).**
-
-**You should see:**
-```
-✔ Functions synced
-✔ Watching for changes...

@@ -26,14 +26,3 @@ export default defineSchema({
     transcript: v.string()
   })
 });
-```
-
-**Save and close.**
-
-**Watch the Convex terminal - it should auto-sync!**
-
----
-
-**When you see in Convex terminal:**
-```
-✔ Schema synced

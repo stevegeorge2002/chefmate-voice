@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👨‍🍳 ChefMate Voice - Kitchen Display</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -26,25 +22,20 @@
             align-items: center;
             border-bottom: 4px solid #e94560;
             box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             gap: 1rem;
         }
 
+        .logo { display: flex; align-items: center; gap: 1rem; }
         .logo-icon {
             font-size: 3rem;
             filter: drop-shadow(0 0 20px #e94560);
             animation: chef-bounce 2s ease-in-out infinite;
         }
-
         @keyframes chef-bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
-
         .logo-text h1 {
             font-size: 2.5rem;
             background: linear-gradient(135deg, #e94560, #ff6b9d);
@@ -52,444 +43,191 @@
             -webkit-text-fill-color: transparent;
             font-weight: 900;
         }
-
-        .logo-text p {
-            font-size: 1rem;
-            color: #94a3b8;
-            font-weight: 500;
-        }
+        .logo-text p { font-size: 1rem; color: #94a3b8; font-weight: 500; }
 
         .voice-button {
-            width: 120px;
-            height: 120px;
+            width: 100px; height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #e94560, #ff6b9d);
-            border: none;
-            font-size: 3rem;
-            cursor: pointer;
+            border: none; font-size: 2.5rem; cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 8px 32px rgba(233, 69, 96, 0.5);
-            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
         }
-
         .voice-button:hover {
             transform: scale(1.1);
             box-shadow: 0 12px 40px rgba(233, 69, 96, 0.7);
         }
-
         .voice-button.listening {
             animation: pulse-record 1.5s infinite;
             background: #ef4444;
         }
-
         @keyframes pulse-record {
             0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
             50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
         }
-
-        .voice-status {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.875rem;
-            color: #94a3b8;
-            white-space: nowrap;
-        }
+        .voice-status { font-size: 0.6rem; margin-top: 4px; color: white; }
 
         .language-selector {
-            display: flex;
-            gap: 0.5rem;
+            display: flex; gap: 0.5rem;
             background: rgba(255,255,255,0.1);
-            padding: 0.5rem;
-            border-radius: 0.75rem;
+            padding: 0.5rem; border-radius: 0.75rem;
         }
-
         .lang-btn {
-            padding: 0.5rem 1rem;
-            background: transparent;
-            border: 2px solid transparent;
-            border-radius: 0.5rem;
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            padding: 0.5rem 1rem; background: transparent;
+            border: 2px solid transparent; border-radius: 0.5rem;
+            color: white; cursor: pointer; font-weight: 600; transition: all 0.3s;
         }
-
-        .lang-btn.active {
-            background: #e94560;
-            border-color: #ff6b9d;
-        }
-
-        .lang-btn:hover {
-            border-color: #e94560;
-        }
+        .lang-btn.active { background: #e94560; border-color: #ff6b9d; }
+        .lang-btn:hover { border-color: #e94560; }
 
         .dashboard {
             display: grid;
             grid-template-columns: 400px 1fr 350px;
-            gap: 1.5rem;
-            padding: 1.5rem;
+            gap: 1.5rem; padding: 1.5rem;
             min-height: calc(100vh - 150px);
         }
-
         .panel {
-            background: #16213e;
-            border-radius: 1rem;
-            padding: 1.5rem;
+            background: #16213e; border-radius: 1rem; padding: 1.5rem;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             border: 2px solid rgba(233, 69, 96, 0.3);
         }
-
         .panel-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #e94560;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;
+            color: #e94560; display: flex; justify-content: space-between;
+            align-items: center; text-transform: uppercase; letter-spacing: 2px;
         }
 
         .transcript-box {
-            background: #0f3460;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            min-height: 150px;
-            margin-bottom: 1.5rem;
-            border: 2px solid #e94560;
+            background: #0f3460; border-radius: 0.75rem; padding: 1.5rem;
+            min-height: 120px; margin-bottom: 1.5rem; border: 2px solid #e94560;
         }
-
-        .transcript-text {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            color: #94a3b8;
-            font-style: italic;
-        }
-
-        .transcript-text.active {
-            color: white;
-            animation: typing 0.5s;
-        }
-
-        @keyframes typing {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
-        }
+        .transcript-text { font-size: 1.15rem; line-height: 1.6; color: #94a3b8; font-style: italic; }
+        .transcript-text.active { color: white; animation: typing 0.5s; }
+        @keyframes typing { from { opacity: 0.5; } to { opacity: 1; } }
 
         .orders-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-height: calc(100vh - 400px);
-            overflow-y: auto;
+            display: flex; flex-direction: column; gap: 1rem;
+            max-height: calc(100vh - 400px); overflow-y: auto;
         }
-
         .order-card {
-            background: #0f3460;
-            border-radius: 0.875rem;
-            padding: 1.25rem;
-            border-left: 6px solid #e94560;
-            animation: slide-in 0.4s ease-out;
+            background: #0f3460; border-radius: 0.875rem; padding: 1.25rem;
+            border-left: 6px solid #e94560; animation: slide-in 0.4s ease-out;
             transition: all 0.3s;
         }
-
         @keyframes slide-in {
             from { opacity: 0; transform: translateX(-50px); }
             to { opacity: 1; transform: translateX(0); }
         }
-
-        .order-card:hover {
-            transform: translateX(8px);
-            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
-        }
-
+        .order-card:hover { transform: translateX(8px); box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4); }
         .order-card.ready {
             border-left-color: #10b981;
             background: linear-gradient(135deg, #0f3460, #064e3b);
             animation: pulse-green 2s infinite;
         }
-
         @keyframes pulse-green {
             0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
             50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
         }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .table-number {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: #e94560;
-        }
-
-        .order-id {
-            font-size: 0.875rem;
-            color: #64748b;
-            font-family: 'Courier New', monospace;
-        }
-
-        .order-items {
-            display: grid;
-            gap: 0.75rem;
-        }
-
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .table-number { font-size: 1.75rem; font-weight: 800; color: #e94560; }
+        .order-id { font-size: 0.875rem; color: #64748b; font-family: 'Courier New', monospace; }
+        .order-items { display: grid; gap: 0.75rem; }
         .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 0.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem;
         }
-
-        .item-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .item-temp {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
+        .item-name { font-weight: 600; font-size: 1.1rem; }
+        .item-temp { font-size: 0.875rem; color: #94a3b8; }
         .timer {
-            font-family: 'Courier New', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            padding: 0.5rem 1rem;
-            background: #1e293b;
-            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace; font-size: 1.5rem; font-weight: 700;
+            padding: 0.5rem 1rem; background: #1e293b; border-radius: 0.5rem;
         }
-
-        .timer.warning {
-            color: #fbbf24;
-            animation: blink 1s infinite;
-        }
-
-        .timer.ready {
-            color: #10b981;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        .timer.warning { color: #fbbf24; animation: blink 1s infinite; }
+        .timer.ready { color: #10b981; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         .allergen-alert {
             background: linear-gradient(135deg, #dc2626, #991b1b);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
-            border: 3px solid #fca5a5;
-            animation: shake 0.5s, pulse-red 2s infinite;
+            padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1rem;
+            border: 3px solid #fca5a5; animation: shake 0.5s, pulse-red 2s infinite;
         }
-
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
             75% { transform: translateX(10px); }
         }
-
         @keyframes pulse-red {
             0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
             50% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
         }
-
-        .allergen-alert h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
+        .allergen-alert h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
 
         .inventory-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: #0f3460;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.75rem; background: #0f3460; border-radius: 0.5rem; margin-bottom: 0.5rem;
         }
-
-        .inventory-item.low {
-            background: linear-gradient(135deg, #92400e, #78350f);
-            border: 2px solid #fbbf24;
-        }
-
-        .inventory-item.out {
-            background: linear-gradient(135deg, #7f1d1d, #991b1b);
-            border: 2px solid #dc2626;
-        }
-
-        .stock-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            font-size: 0.875rem;
-        }
-
+        .inventory-item.low { background: linear-gradient(135deg, #92400e, #78350f); border: 2px solid #fbbf24; }
+        .inventory-item.out { background: linear-gradient(135deg, #7f1d1d, #991b1b); border: 2px solid #dc2626; }
+        .stock-badge { padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 700; font-size: 0.875rem; }
         .stock-badge.ok { background: #10b981; color: white; }
         .stock-badge.low { background: #fbbf24; color: #1a1a2e; }
         .stock-badge.out { background: #dc2626; color: white; }
 
         .demo-controls {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+            position: fixed; bottom: 2rem; right: 2rem;
             background: linear-gradient(135deg, #16213e, #0f3460);
-            padding: 1.5rem;
-            border-radius: 1rem;
+            padding: 1.5rem; border-radius: 1rem;
             box-shadow: 0 12px 48px rgba(0,0,0,0.6);
-            border: 3px solid #e94560;
-            z-index: 100;
+            border: 3px solid #e94560; z-index: 100;
         }
-
         .demo-btn {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            background: #0f3460;
-            border: 2px solid #e94560;
-            border-radius: 0.75rem;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 100%; padding: 1rem; margin-bottom: 0.75rem;
+            background: #0f3460; border: 2px solid #e94560; border-radius: 0.75rem;
+            color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
         }
-
-        .demo-btn:hover {
-            background: #e94560;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
-        }
+        .demo-btn:hover { background: #e94560; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5); }
 
         .toast {
-            position: fixed;
-            top: 120px;
-            right: 2rem;
+            position: fixed; top: 120px; right: 2rem;
             background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 1.5rem 2rem;
-            border-radius: 0.75rem;
+            color: white; padding: 1.5rem 2rem; border-radius: 0.75rem;
             box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-weight: 600; font-size: 1.1rem;
             transform: translateX(500px);
             transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            max-width: 450px;
+            z-index: 1000; max-width: 450px;
         }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.error {
-            background: linear-gradient(135deg, #dc2626, #991b1b);
-        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: linear-gradient(135deg, #dc2626, #991b1b); }
 
         .stat-card {
             background: linear-gradient(135deg, #0f3460, #16213e);
-            padding: 1.25rem;
-            border-radius: 0.875rem;
-            margin-bottom: 1rem;
+            padding: 1.25rem; border-radius: 0.875rem; margin-bottom: 1rem;
             border: 2px solid rgba(233, 69, 96, 0.3);
         }
-
-        .stat-card h3 {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #e94560;
-            font-family: 'Courier New', monospace;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 0.25rem;
-        }
+        .stat-card h3 { font-size: 0.875rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: #e94560; font-family: 'Courier New', monospace; }
+        .stat-label { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
 
         .conversation-feed {
-            background: #0f3460;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 1rem;
+            background: #0f3460; border-radius: 0.75rem; padding: 1rem;
+            max-height: 300px; overflow-y: auto; margin-top: 1rem;
         }
+        .message { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.5rem; animation: fade-in 0.3s; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.chef { background: rgba(233, 69, 96, 0.2); border-left: 4px solid #e94560; }
+        .message.line_cook_1, .message.line_cook_2, .message.server_2 { background: rgba(16, 185, 129, 0.2); border-left: 4px solid #10b981; }
+        .message.server_1 { background: rgba(59, 130, 246, 0.2); border-left: 4px solid #3b82f6; }
+        .message-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.75rem; color: #94a3b8; }
+        .message-text { font-size: 1rem; line-height: 1.4; }
+        .translation { font-size: 0.875rem; color: #64748b; margin-top: 0.5rem; font-style: italic; }
 
-        .message {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.5rem;
-            animation: fade-in 0.3s;
-        }
-
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message.chef {
-            background: rgba(233, 69, 96, 0.2);
-            border-left: 4px solid #e94560;
-        }
-
-        .message.line-cook {
-            background: rgba(16, 185, 129, 0.2);
-            border-left: 4px solid #10b981;
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .message-text {
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-
-        .translation {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-
-        @media (max-width: 1400px) {
-            .dashboard {
-                grid-template-columns: 350px 1fr 300px;
-            }
-        }
-
+        @media (max-width: 1400px) { .dashboard { grid-template-columns: 350px 1fr 300px; } }
         @media (max-width: 1024px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            .demo-controls {
-                bottom: 1rem;
-                right: 1rem;
-                left: 1rem;
-            }
+            .dashboard { grid-template-columns: 1fr; }
+            .demo-controls { bottom: 1rem; right: 1rem; left: 1rem; }
         }
     </style>
 </head>
@@ -504,45 +242,39 @@
         </div>
 
         <div class="language-selector">
-            <button class="lang-btn active" onclick="setLanguage('en')">🇺🇸 EN</button>
-            <button class="lang-btn" onclick="setLanguage('es')">🇪🇸 ES</button>
-            <button class="lang-btn" onclick="setLanguage('zh')">🇨🇳 ZH</button>
-            <button class="lang-btn" onclick="setLanguage('fr')">🇫🇷 FR</button>
-            <button class="lang-btn" onclick="setLanguage('vi')">🇻🇳 VI</button>
+            <button class="lang-btn active" onclick="setLanguage('en', this)">🇺🇸 EN</button>
+            <button class="lang-btn" onclick="setLanguage('es', this)">🇪🇸 ES</button>
+            <button class="lang-btn" onclick="setLanguage('zh', this)">🇨🇳 ZH</button>
+            <button class="lang-btn" onclick="setLanguage('fr', this)">🇫🇷 FR</button>
+            <button class="lang-btn" onclick="setLanguage('vi', this)">🇻🇳 VI</button>
         </div>
 
-        <div style="position: relative;">
-            <button class="voice-button" id="voice-btn" onclick="toggleVoice()">🎙️</button>
-            <div class="voice-status" id="voice-status">Click to speak</div>
-        </div>
+        <button class="voice-button" id="voice-btn" onclick="toggleVoice()">
+            🎙️
+            <span class="voice-status" id="voice-status">Click to speak</span>
+        </button>
     </div>
 
     <div class="dashboard">
+        <!-- Left Panel: Voice Input & Conversation -->
         <div class="panel">
             <div class="panel-header">Voice Input</div>
-
             <div class="transcript-box">
                 <div class="transcript-text" id="transcript">
-                    Click the microphone button or type a command below...
+                    Click the microphone or type a command below...
                 </div>
             </div>
-
             <div style="margin-bottom: 1.5rem;">
-                <input 
-                    type="text" 
-                    id="text-command" 
+                <input type="text" id="text-command"
                     placeholder="Type: 'Order fire table 5, two steaks medium-rare'"
                     style="width: 100%; padding: 1rem; background: #0f3460; border: 2px solid #e94560; border-radius: 0.5rem; color: white; font-size: 1rem;"
                     onkeypress="if(event.key==='Enter') sendTextCommand()"
                 />
-                <button 
-                    onclick="sendTextCommand()"
-                    style="width: 100%; margin-top: 0.5rem; padding: 1rem; background: #e94560; border: none; border-radius: 0.5rem; color: white; font-weight: 700; cursor: pointer; font-size: 1rem;"
-                >
+                <button onclick="sendTextCommand()"
+                    style="width: 100%; margin-top: 0.5rem; padding: 1rem; background: #e94560; border: none; border-radius: 0.5rem; color: white; font-weight: 700; cursor: pointer; font-size: 1rem;">
                     Send Command
                 </button>
             </div>
-
             <div class="conversation-feed" id="conversation">
                 <div style="text-align: center; color: #64748b; padding: 2rem;">
                     No messages yet. Start giving voice commands!
@@ -550,12 +282,12 @@
             </div>
         </div>
 
+        <!-- Center Panel: Active Orders -->
         <div class="panel">
             <div class="panel-header">
                 Active Orders
                 <span style="background: #e94560; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 1rem;" id="active-count">0</span>
             </div>
-
             <div class="orders-container" id="orders">
                 <div style="text-align: center; padding: 3rem; color: #64748b;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
@@ -565,35 +297,27 @@
             </div>
         </div>
 
+        <!-- Right Panel: Stats & Inventory -->
         <div class="panel">
             <div class="panel-header">Kitchen Stats</div>
-
             <div class="stat-card">
                 <h3>Orders Today</h3>
                 <div class="stat-value" id="total-orders">0</div>
                 <div class="stat-label">Total processed</div>
             </div>
-
             <div class="stat-card">
                 <h3>Time Saved</h3>
                 <div class="stat-value" id="time-saved">0</div>
                 <div class="stat-label">minutes vs manual</div>
             </div>
-
             <div class="stat-card">
                 <h3>Accuracy</h3>
                 <div class="stat-value">98.5%</div>
                 <div class="stat-label">Voice recognition</div>
             </div>
-
             <div style="margin-top: 2rem;">
                 <h3 style="margin-bottom: 1rem; color: #e94560; font-size: 1.25rem;">INVENTORY</h3>
-                <div id="inventory-list">
-                    <div class="inventory-item">
-                        <span>🥩 Ribeye</span>
-                        <span class="stock-badge ok">50 portions</span>
-                    </div>
-                </div>
+                <div id="inventory-list"></div>
             </div>
         </div>
     </div>
@@ -609,421 +333,630 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Auto-detect API URL
-        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:8000'
-            : 'https://chefmate-voice-backend.onrender.com';
+    // ============================================
+    // CONFIG
+    // ============================================
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:8000'
+        : null; // null = standalone mode on GitHub Pages
 
-        let currentLanguage = 'en';
-        let recognition = null;
-        let orders = {};
-        let timerIntervals = {};
+    let currentLanguage = 'en';
+    let recognition = null;
+    let orders = {};
+    let timerIntervals = {};
+    let orderCounter = 1;
+    let totalOrdersToday = 0;
+    let backendConnected = false;
 
-        // Initialize Speech Recognition
-        function initSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
-            if (!SpeechRecognition) {
-                console.warn('Speech Recognition not supported in this browser');
-                return null;
-            }
+    // ============================================
+    // MENU DATABASE (mirrors backend/kitchen_agent.py)
+    // ============================================
+    const MENU = {
+        steak_rare:        { name: "Steak Rare",        cook_time: 8,  allergens: [],                          price: 38 },
+        steak_medium_rare: { name: "Steak Medium-Rare", cook_time: 12, allergens: [],                          price: 38 },
+        steak_medium:      { name: "Steak Medium",      cook_time: 15, allergens: [],                          price: 38 },
+        steak_well_done:   { name: "Steak Well-Done",   cook_time: 18, allergens: [],                          price: 38 },
+        salmon:            { name: "Grilled Salmon",     cook_time: 14, allergens: ["fish"],                    price: 32 },
+        pasta_carbonara:   { name: "Pasta Carbonara",    cook_time: 10, allergens: ["gluten", "dairy", "eggs"], price: 24 },
+        chicken_marsala:   { name: "Chicken Marsala",    cook_time: 16, allergens: ["dairy"],                   price: 28 },
+        caesar_salad:      { name: "Caesar Salad",       cook_time: 5,  allergens: ["dairy", "gluten"],         price: 12 },
+        garlic_bread:      { name: "Garlic Bread",       cook_time: 8,  allergens: ["gluten", "dairy"],         price: 8  },
+    };
 
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
+    const CUSTOMER_ALLERGIES = {
+        5: [],
+        12: ["dairy", "gluten"],
+        3: ["peanuts"],
+        7: ["shellfish"],
+        15: ["tree_nuts"]
+    };
 
-            recognition.onstart = () => {
-                document.getElementById('voice-status').textContent = '🎙️ Listening...';
-            };
+    let inventory = { ribeye: 50, salmon: 20, pasta: 100, chicken: 35, romaine: 30 };
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('text-command').value = transcript;
-                document.getElementById('transcript').textContent = `"${transcript}"`;
-                document.getElementById('transcript').classList.add('active');
-                
-                // Auto-send command
-                setTimeout(() => {
-                    sendTextCommand();
-                }, 500);
-            };
+    // ============================================
+    // CLIENT-SIDE COMMAND PARSER
+    // ============================================
+    function parseCommand(transcript) {
+        const t = transcript.toLowerCase();
 
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                showToast('⚠️ Voice recognition error. Try typing instead.', true);
-                stopVoice();
-            };
+        // Determine action
+        let action = "fire";
+        if (t.includes("cancel"))                          action = "cancel";
+        else if (t.includes("86") || t.includes("sold out")) action = "86";
+        else if (/plated|ready|pickup/.test(t))            action = "plated";
+        else if (/status|how long/.test(t))                action = "status";
 
-            recognition.onend = () => {
-                stopVoice();
-            };
+        // Extract table number
+        const tableMatch = t.match(/table\s+(\d+)|mesa\s+(\d+)/);
+        const tableNumber = tableMatch ? parseInt(tableMatch[1] || tableMatch[2]) : null;
 
-            return recognition;
-        }
+        // Extract items
+        const items = [];
 
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (recognition) {
-                recognition.lang = lang === 'zh' ? 'zh-CN' : lang === 'vi' ? 'vi-VN' : `${lang}-US`;
-            }
-            
-            showToast(`Language set to ${lang.toUpperCase()}`);
-        }
-
-        function toggleVoice() {
-            if (!recognition) {
-                recognition = initSpeechRecognition();
-                if (!recognition) {
-                    showToast('⚠️ Voice not supported. Use text input instead.', true);
-                    return;
+        // Steaks with temps (check most specific first)
+        const steakTemps = [
+            [/steak.*medium[-\s]rare|bistec.*t[eé]rmino\s*medio/, "medium_rare"],
+            [/steak.*medium[-\s]well/, "medium_well"],
+            [/steak.*well[-\s]done/, "well_done"],
+            [/steak.*medium(?![-\s])/, "medium"],
+            [/steak.*rare/, "rare"],
+        ];
+        for (const [pattern, temp] of steakTemps) {
+            if (pattern.test(t)) {
+                const qtyMatch = t.match(/(one|two|three|four|five|dos|tres|\d)\s*steak/);
+                let qty = 1;
+                if (qtyMatch) {
+                    const map = { one:1, two:2, three:3, four:4, five:5, dos:2, tres:3 };
+                    qty = map[qtyMatch[1]] || parseInt(qtyMatch[1]) || 1;
                 }
+                items.push({ dish: "steak", temp, quantity: qty });
+                break;
             }
+        }
 
-            const btn = document.getElementById('voice-btn');
-            
-            if (btn.classList.contains('listening')) {
-                stopVoice();
-            } else {
-                try {
-                    recognition.start();
-                    btn.classList.add('listening');
-                    btn.textContent = '🔴';
-                } catch (err) {
-                    console.error('Start error:', err);
-                    showToast('Click again to start recording', true);
+        // Other menu items
+        if (/salmon|salm[oó]n/.test(t))         items.push({ dish: "salmon",          temp: null, quantity: 1 });
+        if (/pasta|carbonara/.test(t))           items.push({ dish: "pasta_carbonara", temp: null, quantity: 1 });
+        if (/salad|ensalada|caesar/.test(t))     items.push({ dish: "caesar_salad",    temp: null, quantity: 1 });
+        if (/chicken|pollo|marsala/.test(t))     items.push({ dish: "chicken_marsala", temp: null, quantity: 1 });
+        if (/garlic\s*bread/.test(t))            items.push({ dish: "garlic_bread",    temp: null, quantity: 1 });
+
+        return {
+            action,
+            table_number: tableNumber,
+            items,
+            urgency: /fly|asap|urgente/.test(t) ? "rush" : "normal",
+            original_transcript: transcript
+        };
+    }
+
+    function processCommandLocally(transcript, speakerRole, language) {
+        const parsed = parseCommand(transcript);
+        const tableNumber = parsed.table_number;
+
+        // --- FIRE ORDER ---
+        if (parsed.action === "fire" && parsed.items.length > 0 && tableNumber) {
+            const orderId = "ORD-" + String(orderCounter++).padStart(4, '0');
+            const customerAllergies = CUSTOMER_ALLERGIES[tableNumber] || [];
+            const allergenWarnings = [];
+            const orderItems = [];
+            let maxCookTime = 0;
+
+            for (const item of parsed.items) {
+                const dishKey = item.temp ? ("steak_" + item.temp) : item.dish;
+                const dishData = MENU[dishKey] || MENU[item.dish];
+                if (!dishData) continue;
+
+                // Check allergens
+                if (customerAllergies.length > 0) {
+                    const conflicts = customerAllergies.filter(a => dishData.allergens.includes(a));
+                    if (conflicts.length > 0) {
+                        allergenWarnings.push({
+                            dish: dishData.name,
+                            allergens: conflicts,
+                            severity: "critical",
+                            message: "ALLERGEN ALERT: " + dishData.name + " contains " + conflicts.join(', ') + "! Table " + tableNumber + " has allergy."
+                        });
+                    }
                 }
-            }
-        }
 
-        function stopVoice() {
-            const btn = document.getElementById('voice-btn');
-            btn.classList.remove('listening');
-            btn.textContent = '🎙️';
-            document.getElementById('voice-status').textContent = 'Click to speak';
-        }
-
-        async function sendTextCommand() {
-            const input = document.getElementById('text-command');
-            const command = input.value.trim();
-            
-            if (!command) return;
-
-            const transcript = document.getElementById('transcript');
-            transcript.textContent = `"${command}"`;
-            transcript.classList.add('active');
-
-            addMessage('chef', currentLanguage, command);
-
-            try {
-                const response = await fetch(`${API_URL}/api/voice/command`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        transcript: command,
-                        speaker_role: 'chef',
-                        language: currentLanguage
-                    })
+                const cookTime = dishData.cook_time;
+                maxCookTime = Math.max(maxCookTime, cookTime);
+                orderItems.push({
+                    dish_key: dishKey,
+                    dish_name: dishData.name,
+                    quantity: item.quantity,
+                    temp: item.temp,
+                    cook_time_minutes: cookTime,
+                    status: "cooking",
+                    started_at: new Date().toISOString(),
+                    ready_at: new Date(Date.now() + cookTime * 60000).toISOString()
                 });
 
-                const data = await response.json();
-
-                if (data.success) {
-                    if (data.order) {
-                        addOrder(data.order);
-                        showToast(`✅ Order created: Table ${data.order.table_number}`);
-                    }
-                    
-                    if (data.allergen_warnings && data.allergen_warnings.length > 0) {
-                        showAllergenAlert(data.allergen_warnings[0]);
-                    }
-                    
-                    loadAnalytics();
-                } else {
-                    showToast(`❌ ${data.error || 'Command failed'}`, true);
+                // Deduct inventory
+                var invKey = null;
+                if (item.dish === "steak")               invKey = "ribeye";
+                else if (item.dish === "salmon")         invKey = "salmon";
+                else if (item.dish === "pasta_carbonara") invKey = "pasta";
+                else if (item.dish === "chicken_marsala") invKey = "chicken";
+                else if (item.dish === "caesar_salad")   invKey = "romaine";
+                if (invKey && inventory[invKey] !== undefined) {
+                    inventory[invKey] = Math.max(0, inventory[invKey] - item.quantity);
                 }
-            } catch (error) {
-                console.error('API error:', error);
-                showToast('⚠️ Using demo mode - Backend offline', true);
             }
 
-            input.value = '';
-            setTimeout(() => transcript.classList.remove('active'), 3000);
-        }
-
-        function addMessage(speaker, lang, text, translation = null) {
-            const feed = document.getElementById('conversation');
-            
-            if (feed.querySelector('div[style*="text-align: center"]')) {
-                feed.innerHTML = '';
-            }
-
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${speaker}`;
-            msgDiv.innerHTML = `
-                <div class="message-header">
-                    <span style="font-weight: 700;">${speaker.toUpperCase()} (${lang.toUpperCase()})</span>
-                    <span>${new Date().toLocaleTimeString()}</span>
-                </div>
-                <div class="message-text">${text}</div>
-                ${translation ? `<div class="translation">🌍 ${translation}</div>` : ''}
-            `;
-
-            feed.appendChild(msgDiv);
-            feed.scrollTop = feed.scrollHeight;
-        }
-
-        function addOrder(order) {
-            const container = document.getElementById('orders');
-            
-            if (container.querySelector('div[style*="text-align: center"]')) {
-                container.innerHTML = '';
-            }
-
-            const orderDiv = document.createElement('div');
-            orderDiv.className = 'order-card';
-            orderDiv.id = `order-${order.order_id}`;
-
-            let itemsHtml = '';
-            order.items.forEach(item => {
-                const cookTime = item.cook_time_minutes;
-                itemsHtml += `
-                    <div class="item-row">
-                        <div>
-                            <div class="item-name">${item.quantity}x ${item.dish_name}</div>
-                            ${item.temp ? `<div class="item-temp">${item.temp.replace('_', ' ')}</div>` : ''}
-                        </div>
-                        <div class="timer" id="timer-${order.order_id}-${item.dish_key}">${cookTime}:00</div>
-                    </div>
-                `;
-            });
-
-            orderDiv.innerHTML = `
-                <div class="order-header">
-                    <div class="table-number">Table ${order.table_number}</div>
-                    <div class="order-id">${order.order_id}</div>
-                </div>
-                <div class="order-items">${itemsHtml}</div>
-            `;
-
-            container.insertBefore(orderDiv, container.firstChild);
-            orders[order.order_id] = order;
-            startOrderTimers(order);
-            updateOrderCount();
-        }
-
-        function startOrderTimers(order) {
-            order.items.forEach(item => {
-                const timerId = `timer-${order.order_id}-${item.dish_key}`;
-                const timerElement = document.getElementById(timerId);
-                
-                if (!timerElement) return;
-
-                let secondsRemaining = item.cook_time_minutes * 60;
-
-                const interval = setInterval(() => {
-                    secondsRemaining--;
-
-                    if (secondsRemaining <= 0) {
-                        clearInterval(interval);
-                        timerElement.textContent = '✅ READY';
-                        timerElement.classList.add('ready');
-                        
-                        const orderCard = document.getElementById(`order-${order.order_id}`);
-                        if (orderCard) orderCard.classList.add('ready');
-                        
-                        showToast(`🔔 Table ${order.table_number} is READY!`);
-                    } else {
-                        const minutes = Math.floor(secondsRemaining / 60);
-                        const seconds = secondsRemaining % 60;
-                        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        
-                        if (secondsRemaining <= 120) {
-                            timerElement.classList.add('warning');
-                        }
-                    }
-                }, 1000);
-
-                timerIntervals[timerId] = interval;
-            });
-        }
-
-        function showAllergenAlert(warning) {
-            const container = document.getElementById('orders');
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'allergen-alert';
-            alertDiv.innerHTML = `
-                <h3>🚨 ALLERGEN ALERT</h3>
-                <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">
-                    <strong>${warning.dish}</strong> contains ${warning.allergens.join(', ')}
-                </p>
-                <p style="font-size: 1rem; opacity: 0.9;">${warning.message}</p>
-            `;
-
-            container.insertBefore(alertDiv, container.firstChild);
-            setTimeout(() => alertDiv.remove(), 10000);
-        }
-
-        function updateOrderCount() {
-            document.getElementById('active-count').textContent = Object.keys(orders).length;
-        }
-
-        async function loadAnalytics() {
-            try {
-                const response = await fetch(`${API_URL}/api/analytics`);
-                const data = await response.json();
-                
-                document.getElementById('total-orders').textContent = data.total_orders_today || 0;
-                
-                if (data.time_saved_vs_manual) {
-                    const minutes = parseFloat(data.time_saved_vs_manual);
-                    document.getElementById('time-saved').textContent = Math.round(minutes);
-                }
-            } catch (error) {
-                console.error('Analytics error:', error);
-            }
-        }
-
-        async function loadInventory() {
-            try {
-                const response = await fetch(`${API_URL}/api/inventory`);
-                const data = await response.json();
-                
-                const inventoryList = document.getElementById('inventory-list');
-                inventoryList.innerHTML = '';
-
-                const icons = {
-                    ribeye: '🥩',
-                    salmon: '🐟',
-                    pasta: '🍝',
-                    chicken: '🍗',
-                    romaine: '🥬'
-                };
-
-                for (const [item, details] of Object.entries(data.inventory)) {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = `inventory-item ${details.status}`;
-                    itemDiv.innerHTML = `
-                        <span>${icons[item] || '📦'} ${item.charAt(0).toUpperCase() + item.slice(1)}</span>
-                        <span class="stock-badge ${details.status}">${details.quantity} left</span>
-                    `;
-                    inventoryList.appendChild(itemDiv);
-                }
-            } catch (error) {
-                console.error('Inventory error:', error);
-            }
-        }
-
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.remove('error');
-            if (isError) toast.classList.add('error');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        }
-
-        async function runDemo(scenario) {
-            const demos = {
-                'dinner-rush': { endpoint: '/api/demo/dinner-rush', message: '🍽️ Dinner rush simulated - 5 orders created!' },
-                'multilingual': { endpoint: '/api/demo/multilingual-conversation', message: '🌍 Multilingual conversation simulated!' },
-                'allergen': { endpoint: '/api/demo/allergen-alert', message: '🚨 Allergen alert triggered!' },
-                'reset': { endpoint: '/api/demo/reset', message: '🔄 Kitchen reset' }
+            const order = {
+                order_id: orderId,
+                table_number: tableNumber,
+                items: orderItems,
+                status: "cooking",
+                urgency: parsed.urgency,
+                created_at: new Date().toISOString(),
+                estimated_ready_at: new Date(Date.now() + maxCookTime * 60000).toISOString(),
+                allergen_warnings: allergenWarnings,
+                original_command: transcript,
+                speaker: speakerRole,
+                language: language
             };
 
-            const demo = demos[scenario];
-            if (!demo) return;
-
-            try {
-                const response = await fetch(`${API_URL}${demo.endpoint}`, { method: 'POST' });
-                const data = await response.json();
-
-                if (scenario === 'dinner-rush') {
-                    await loadActiveOrders();
-                } else if (scenario === 'multilingual' && data.conversation) {
-                    data.conversation.forEach((msg, i) => {
-                        setTimeout(() => addMessage(msg.speaker, msg.original_language, msg.original_message), i * 1000);
-                    });
-                } else if (scenario === 'allergen') {
-                    if (data.allergen_warnings?.length > 0) showAllergenAlert(data.allergen_warnings[0]);
-                    if (data.order) addOrder(data.order);
-                } else if (scenario === 'reset') {
-                    orders = {};
-                    document.getElementById('orders').innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: #64748b;">
-                            <div style="font-size: 4rem; margin-bottom: 1rem;">🍳</div>
-                            <h3>No Active Orders</h3>
-                        </div>
-                    `;
-                    document.getElementById('conversation').innerHTML = `
-                        <div style="text-align: center; color: #64748b; padding: 2rem;">Conversation cleared</div>
-                    `;
-                    updateOrderCount();
-                }
-
-                showToast(demo.message);
-                loadAnalytics();
-                loadInventory();
-            } catch (error) {
-                console.error('Demo error:', error);
-                showToast('⚠️ Demo failed - Backend offline', true);
-            }
+            return { success: true, order_id: orderId, order: order, allergen_warnings: allergenWarnings };
         }
 
-        async function loadActiveOrders() {
-            try {
-                const response = await fetch(`${API_URL}/api/orders/active`);
-                const data = await response.json();
-
-                if (data.orders?.length > 0) {
-                    document.getElementById('orders').innerHTML = '';
-                    data.orders.forEach(order => addOrder(order));
+        // --- PLATED / PICKUP ---
+        if (parsed.action === "plated" && tableNumber) {
+            var foundId = null;
+            for (var id in orders) {
+                if (orders[id].table_number === tableNumber) { foundId = id; break; }
+            }
+            if (foundId) {
+                delete orders[foundId];
+                for (var k in timerIntervals) {
+                    if (k.indexOf(foundId) !== -1) { clearInterval(timerIntervals[k]); delete timerIntervals[k]; }
                 }
-
                 updateOrderCount();
-            } catch (error) {
-                console.error('Load orders error:', error);
+                var orderEl = document.getElementById("order-" + foundId);
+                if (orderEl) orderEl.remove();
+                if (Object.keys(orders).length === 0) {
+                    document.getElementById('orders').innerHTML =
+                        '<div style="text-align:center;padding:3rem;color:#64748b;">' +
+                        '<div style="font-size:4rem;margin-bottom:1rem;">🍳</div>' +
+                        '<h3>No Active Orders</h3></div>';
+                }
+                return { success: true, message: { en: "Table " + tableNumber + " completed!", es: "Mesa " + tableNumber + " completada!" } };
             }
+            return { success: false, message: "No active order for table " + tableNumber };
         }
 
-        window.onload = async function() {
-            console.log('👨‍🍳 ChefMate Voice Dashboard Initializing...');
-            
-            // Initialize speech recognition
-            recognition = initSpeechRecognition();
-            
-            if (!recognition) {
-                document.getElementById('voice-status').textContent = 'Voice not supported - use text';
+        // --- 86 (SOLD OUT) ---
+        if (parsed.action === "86") {
+            var items86 = [];
+            for (var i = 0; i < parsed.items.length; i++) {
+                var item86 = parsed.items[i];
+                var k86 = item86.dish === "steak" ? "ribeye" : item86.dish;
+                if (inventory[k86] !== undefined) { inventory[k86] = 0; items86.push(k86); }
             }
+            renderInventory();
+            return { success: true, items_86d: items86, message: { en: "86'd: " + items86.join(', ') } };
+        }
 
-            try {
-                const response = await fetch(`${API_URL}/api/health`);
-                const health = await response.json();
+        // --- STATUS ---
+        if (parsed.action === "status") {
+            var count = Object.keys(orders).length;
+            return { success: true, message: { en: count + " orders active" } };
+        }
 
-                if (health.status === 'healthy') {
-                    showToast('✅ Connected to ChefMate Voice backend');
-                    await loadAnalytics();
-                    await loadInventory();
-                    await loadActiveOrders();
-                } else {
-                    showToast('⚠️ Backend issues detected', true);
-                }
-            } catch (error) {
-                console.error('Connection error:', error);
-                showToast('⚠️ Backend offline - Demo mode active. Click demo buttons to test!', true);
-            }
+        return { success: false, message: "Could not parse command. Try: 'Order fire table 5, two steaks medium-rare'" };
+    }
 
-            console.log('✅ Dashboard Ready!');
+    // ============================================
+    // SPEECH RECOGNITION (Web Speech API)
+    // ============================================
+    function initSpeechRecognition() {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+        var rec = new SR();
+        rec.continuous = false;
+        rec.interimResults = false;
+        rec.maxAlternatives = 1;
+        rec.lang = 'en-US';
+
+        rec.onstart = function() {
+            document.getElementById('voice-status').textContent = 'Listening...';
         };
+        rec.onresult = function(event) {
+            var transcript = event.results[0][0].transcript;
+            document.getElementById('text-command').value = transcript;
+            document.getElementById('transcript').textContent = '"' + transcript + '"';
+            document.getElementById('transcript').classList.add('active');
+            setTimeout(sendTextCommand, 500);
+        };
+        rec.onerror = function() {
+            showToast('Voice error. Try typing instead.', true);
+            stopVoice();
+        };
+        rec.onend = function() { stopVoice(); };
+        return rec;
+    }
 
-        setInterval(() => {
-            loadAnalytics();
-            loadInventory();
-        }, 5000);
+    function setLanguage(lang, btn) {
+        currentLanguage = lang;
+        document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        if (recognition) {
+            var langMap = { en: 'en-US', es: 'es-US', zh: 'zh-CN', fr: 'fr-FR', vi: 'vi-VN' };
+            recognition.lang = langMap[lang] || 'en-US';
+        }
+        showToast('Language set to ' + lang.toUpperCase());
+    }
+
+    function toggleVoice() {
+        if (!recognition) {
+            recognition = initSpeechRecognition();
+            if (!recognition) {
+                showToast('Voice not supported in this browser. Use text input.', true);
+                return;
+            }
+        }
+        var btn = document.getElementById('voice-btn');
+        if (btn.classList.contains('listening')) {
+            stopVoice();
+        } else {
+            try {
+                recognition.start();
+                btn.classList.add('listening');
+                btn.innerHTML = '🔴<span class="voice-status">Listening...</span>';
+            } catch(e) {
+                showToast('Click again to start recording', true);
+            }
+        }
+    }
+
+    function stopVoice() {
+        var btn = document.getElementById('voice-btn');
+        btn.classList.remove('listening');
+        btn.innerHTML = '🎙️<span class="voice-status" id="voice-status">Click to speak</span>';
+    }
+
+    // ============================================
+    // SEND COMMAND
+    // ============================================
+    async function sendTextCommand() {
+        var input = document.getElementById('text-command');
+        var command = input.value.trim();
+        if (!command) return;
+
+        var transcript = document.getElementById('transcript');
+        transcript.textContent = '"' + command + '"';
+        transcript.classList.add('active');
+        addMessage('chef', currentLanguage, command);
+
+        var result;
+
+        // Try backend first if connected
+        if (backendConnected && API_URL) {
+            try {
+                var response = await fetch(API_URL + '/api/voice/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transcript: command, speaker_role: 'chef', language: currentLanguage })
+                });
+                result = await response.json();
+            } catch(e) {
+                result = processCommandLocally(command, 'chef', currentLanguage);
+            }
+        } else {
+            result = processCommandLocally(command, 'chef', currentLanguage);
+        }
+
+        handleResult(result);
+        input.value = '';
+        setTimeout(function() { transcript.classList.remove('active'); }, 3000);
+    }
+
+    function handleResult(result) {
+        if (result.success) {
+            if (result.order) {
+                addOrder(result.order);
+                showToast('Order created: Table ' + result.order.table_number);
+                totalOrdersToday++;
+            } else if (result.message) {
+                var msg = (typeof result.message === 'object')
+                    ? (result.message[currentLanguage] || result.message.en)
+                    : result.message;
+                showToast(msg);
+            }
+            if (result.allergen_warnings && result.allergen_warnings.length > 0) {
+                for (var w = 0; w < result.allergen_warnings.length; w++) {
+                    showAllergenAlert(result.allergen_warnings[w]);
+                }
+            }
+            updateStats();
+            renderInventory();
+        } else {
+            showToast(result.error || result.message || 'Command not recognized', true);
+        }
+    }
+
+    // ============================================
+    // UI RENDERING
+    // ============================================
+    function addMessage(speaker, lang, text, translation) {
+        var feed = document.getElementById('conversation');
+        if (feed.querySelector('div[style*="text-align: center"]')) feed.innerHTML = '';
+        var d = document.createElement('div');
+        d.className = 'message ' + speaker;
+        d.innerHTML =
+            '<div class="message-header">' +
+                '<span style="font-weight:700;">' + escapeHtml(speaker.toUpperCase()) + ' (' + escapeHtml(lang.toUpperCase()) + ')</span>' +
+                '<span>' + new Date().toLocaleTimeString() + '</span>' +
+            '</div>' +
+            '<div class="message-text">' + escapeHtml(text) + '</div>' +
+            (translation ? '<div class="translation">🌍 ' + escapeHtml(translation) + '</div>' : '');
+        feed.appendChild(d);
+        feed.scrollTop = feed.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    function addOrder(order) {
+        var container = document.getElementById('orders');
+        if (container.querySelector('div[style*="text-align: center"]')) container.innerHTML = '';
+
+        var div = document.createElement('div');
+        div.className = 'order-card';
+        div.id = 'order-' + order.order_id;
+
+        var itemsHtml = '';
+        for (var i = 0; i < order.items.length; i++) {
+            var item = order.items[i];
+            itemsHtml +=
+                '<div class="item-row">' +
+                    '<div>' +
+                        '<div class="item-name">' + item.quantity + 'x ' + escapeHtml(item.dish_name) + '</div>' +
+                        (item.temp ? '<div class="item-temp">' + item.temp.replace(/_/g, ' ') + '</div>' : '') +
+                    '</div>' +
+                    '<div class="timer" id="timer-' + order.order_id + '-' + item.dish_key + '">' + item.cook_time_minutes + ':00</div>' +
+                '</div>';
+        }
+
+        div.innerHTML =
+            '<div class="order-header">' +
+                '<div class="table-number">Table ' + order.table_number + '</div>' +
+                '<div class="order-id">' + escapeHtml(order.order_id) + '</div>' +
+            '</div>' +
+            '<div class="order-items">' + itemsHtml + '</div>';
+
+        container.insertBefore(div, container.firstChild);
+        orders[order.order_id] = order;
+        startOrderTimers(order);
+        updateOrderCount();
+    }
+
+    function startOrderTimers(order) {
+        for (var i = 0; i < order.items.length; i++) {
+            (function(item) {
+                var timerId = 'timer-' + order.order_id + '-' + item.dish_key;
+                var el = document.getElementById(timerId);
+                if (!el) return;
+                var secs = item.cook_time_minutes * 60;
+                var iv = setInterval(function() {
+                    secs--;
+                    if (secs <= 0) {
+                        clearInterval(iv);
+                        el.textContent = 'READY';
+                        el.classList.add('ready');
+                        var card = document.getElementById('order-' + order.order_id);
+                        if (card) card.classList.add('ready');
+                        showToast('Table ' + order.table_number + ' - ' + item.dish_name + ' READY!');
+                    } else {
+                        var m = Math.floor(secs / 60);
+                        var s = secs % 60;
+                        el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+                        if (secs <= 120) el.classList.add('warning');
+                    }
+                }, 1000);
+                timerIntervals[timerId] = iv;
+            })(order.items[i]);
+        }
+    }
+
+    function showAllergenAlert(warning) {
+        var container = document.getElementById('orders');
+        var d = document.createElement('div');
+        d.className = 'allergen-alert';
+        d.innerHTML =
+            '<h3>🚨 ALLERGEN ALERT</h3>' +
+            '<p style="font-size:1.25rem;margin-bottom:0.5rem;">' +
+                '<strong>' + escapeHtml(warning.dish) + '</strong> contains ' + escapeHtml(warning.allergens.join(', ')) +
+            '</p>' +
+            '<p style="font-size:1rem;opacity:0.9;">' + escapeHtml(warning.message || '') + '</p>';
+        container.insertBefore(d, container.firstChild);
+        setTimeout(function() { if (d.parentNode) d.remove(); }, 10000);
+    }
+
+    function updateOrderCount() {
+        document.getElementById('active-count').textContent = Object.keys(orders).length;
+    }
+
+    function updateStats() {
+        document.getElementById('total-orders').textContent = totalOrdersToday;
+        document.getElementById('time-saved').textContent = Math.round(totalOrdersToday * 19.5);
+    }
+
+    function renderInventory() {
+        var list = document.getElementById('inventory-list');
+        var icons = { ribeye: '🥩', salmon: '🐟', pasta: '🍝', chicken: '🍗', romaine: '🥬' };
+        list.innerHTML = '';
+        for (var item in inventory) {
+            var qty = inventory[item];
+            var status = qty > 10 ? 'ok' : qty > 0 ? 'low' : 'out';
+            var d = document.createElement('div');
+            d.className = 'inventory-item ' + status;
+            d.innerHTML =
+                '<span>' + (icons[item] || '📦') + ' ' + item.charAt(0).toUpperCase() + item.slice(1) + '</span>' +
+                '<span class="stock-badge ' + status + '">' + qty + ' left</span>';
+            list.appendChild(d);
+        }
+    }
+
+    function showToast(message, isError) {
+        var t = document.getElementById('toast');
+        t.textContent = message;
+        t.classList.remove('error');
+        if (isError) t.classList.add('error');
+        t.classList.add('show');
+        setTimeout(function() { t.classList.remove('show'); }, 4000);
+    }
+
+    // ============================================
+    // DEMO SCENARIOS (all run client-side)
+    // ============================================
+    async function runDemo(scenario) {
+        if (scenario === 'reset') {
+            orders = {};
+            orderCounter = 1;
+            totalOrdersToday = 0;
+            inventory = { ribeye: 50, salmon: 20, pasta: 100, chicken: 35, romaine: 30 };
+            for (var k in timerIntervals) { clearInterval(timerIntervals[k]); }
+            timerIntervals = {};
+            document.getElementById('orders').innerHTML =
+                '<div style="text-align:center;padding:3rem;color:#64748b;">' +
+                '<div style="font-size:4rem;margin-bottom:1rem;">🍳</div>' +
+                '<h3>No Active Orders</h3>' +
+                '<p style="margin-top:0.5rem;">Kitchen reset - ready for service</p></div>';
+            document.getElementById('conversation').innerHTML =
+                '<div style="text-align:center;color:#64748b;padding:2rem;">Conversation cleared</div>';
+            updateOrderCount();
+            updateStats();
+            renderInventory();
+            showToast('Kitchen reset to clean state');
+            return;
+        }
+
+        // --- DINNER RUSH ---
+        if (scenario === 'dinner-rush') {
+            var rushOrders = [
+                { speaker: "chef",       lang: "en", msg: "Order fire table 5, two steaks medium-rare" },
+                { speaker: "line_cook_1",lang: "es", msg: "Order fire table 12, pasta carbonara" },
+                { speaker: "chef",       lang: "en", msg: "Order fire table 3, steak well-done" },
+                { speaker: "server_2",   lang: "en", msg: "Order fire table 7, chicken marsala" },
+                { speaker: "chef",       lang: "en", msg: "On the fly order fire table 15, steak medium" }
+            ];
+            for (var i = 0; i < rushOrders.length; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var d = rushOrders[idx];
+                        addMessage(d.speaker, d.lang, d.msg);
+                        var result = processCommandLocally(d.msg, d.speaker, d.lang);
+                        if (result.success && result.order) {
+                            addOrder(result.order);
+                            totalOrdersToday++;
+                            updateStats();
+                            renderInventory();
+                        }
+                        if (result.allergen_warnings && result.allergen_warnings.length > 0) {
+                            for (var w = 0; w < result.allergen_warnings.length; w++) {
+                                showAllergenAlert(result.allergen_warnings[w]);
+                            }
+                        }
+                    }, idx * 700);
+                })(i);
+            }
+            showToast('Dinner rush! 5 orders firing...');
+            return;
+        }
+
+        // --- MULTILINGUAL ---
+        if (scenario === 'multilingual') {
+            var msgs = [
+                { speaker: "chef",       lang: "en", msg: "Order fire table 5, two steaks medium-rare", translation: "Orden fuego mesa 5, dos bistecs termino medio" },
+                { speaker: "line_cook_1",lang: "es", msg: "Cuanto tiempo para mesa 5?", translation: "How long for table 5?" },
+                { speaker: "chef",       lang: "en", msg: "Twelve minutes for steaks", translation: "Doce minutos para los bistecs" },
+                { speaker: "line_cook_1",lang: "es", msg: "Entendido, comenzando ahora", translation: "Understood, starting now" },
+                { speaker: "server_1",   lang: "en", msg: "Table 5 wants steak medium instead", translation: "Mesa 5 quiere bistec termino medio" },
+                { speaker: "chef",       lang: "en", msg: "Update table 5, change to medium", translation: "Actualizar mesa 5, cambiar a termino medio" },
+                { speaker: "line_cook_1",lang: "es", msg: "Listo, mesa 5 bistec termino medio", translation: "Ready, table 5 steak medium" }
+            ];
+            // Create order from first message
+            var result = processCommandLocally(msgs[0].msg, msgs[0].speaker, msgs[0].lang);
+            if (result.success && result.order) {
+                addOrder(result.order);
+                totalOrdersToday++;
+                updateStats();
+                renderInventory();
+            }
+            for (var j = 0; j < msgs.length; j++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        addMessage(msgs[idx].speaker, msgs[idx].lang, msgs[idx].msg, msgs[idx].translation);
+                    }, idx * 900);
+                })(j);
+            }
+            showToast('Multilingual kitchen conversation!');
+            return;
+        }
+
+        // --- ALLERGEN ALERT ---
+        if (scenario === 'allergen') {
+            addMessage('chef', 'en', 'Order fire table 12, pasta carbonara');
+            var aResult = processCommandLocally('Order fire table 12, pasta carbonara', 'chef', 'en');
+            if (aResult.success && aResult.order) {
+                addOrder(aResult.order);
+                totalOrdersToday++;
+                updateStats();
+                renderInventory();
+            }
+            if (aResult.allergen_warnings && aResult.allergen_warnings.length > 0) {
+                for (var a = 0; a < aResult.allergen_warnings.length; a++) {
+                    showAllergenAlert(aResult.allergen_warnings[a]);
+                }
+            }
+            showToast('ALLERGEN ALERT - Table 12 has dairy/gluten allergy!', true);
+            return;
+        }
+    }
+
+    // ============================================
+    // INIT
+    // ============================================
+    window.onload = async function() {
+        recognition = initSpeechRecognition();
+        if (!recognition) {
+            document.getElementById('voice-status').textContent = 'Use text input';
+        }
+
+        renderInventory();
+        updateStats();
+
+        // Try connecting to backend (only on localhost)
+        if (API_URL) {
+            try {
+                var response = await fetch(API_URL + '/api/health');
+                var health = await response.json();
+                if (health.status === 'healthy') {
+                    backendConnected = true;
+                    showToast('Connected to ChefMate backend!');
+                    try {
+                        var inv = await fetch(API_URL + '/api/inventory');
+                        var invData = await inv.json();
+                        if (invData.inventory) {
+                            inventory = {};
+                            for (var k in invData.inventory) inventory[k] = invData.inventory[k].quantity;
+                            renderInventory();
+                        }
+                    } catch(e) {}
+                }
+            } catch(e) {
+                showToast('Standalone demo mode - try the demo buttons!');
+            }
+        } else {
+            showToast('ChefMate Voice ready! Use voice or demo buttons.');
+        }
+    };
     </script>
 </body>
 </html>
